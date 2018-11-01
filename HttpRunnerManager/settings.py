@@ -117,10 +117,10 @@ if DEBUG:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'HttpRunner',  # 新建数据库名
+            'NAME': 'httprunner',  # 新建数据库名
             'USER': 'root',  # 数据库登录名
-            'PASSWORD': 'Hst888888',  # 数据库登录密码
-            'HOST': '192.168.91.45',  # 数据库所在服务器ip地址
+            'PASSWORD': '123456',  # 数据库登录密码
+            'HOST': '127.0.0.1',  # 数据库所在服务器ip地址
             'PORT': '3306',  # 监听端口 默认3306即可
         }
     }
@@ -164,8 +164,8 @@ CELERYD_CONCURRENCY = 1 if DEBUG else 10 # celery worker的并发数 也是命�
 CELERYD_MAX_TASKS_PER_CHILD = 100  # 每个worker执行了多少任务就会死掉，我建议数量可以大一些，比如200
 
 
-EMAIL_SEND_USERNAME = 'quanwang.yin@hstong.com'  # 定时任务报告发送邮箱，支持163,qq,sina,企业qq邮箱等，注意需要开通smtp服务
-EMAIL_SEND_PASSWORD = 'TANGxinbing135!'     # 邮箱密码
+EMAIL_SEND_USERNAME = ''  # 定时任务报告发送邮箱，支持163,qq,sina,企业qq邮箱等，注意需要开通smtp服务
+EMAIL_SEND_PASSWORD = ''     # 邮箱密码
 
 LOGGING = {
     'version': 1,
