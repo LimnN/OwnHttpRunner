@@ -3,10 +3,13 @@ import logging
 import os
 import shutil
 import sys
+import time
+from os.path import exists
 
 import paramiko
+from django import forms
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, StreamingHttpResponse
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.utils.safestring import mark_safe
 from djcelery.models import PeriodicTask
 from dwebsocket import accept_websocket
@@ -25,11 +28,14 @@ from ApiManager.utils.runner import run_by_batch, run_test_by_type
 from ApiManager.utils.task_opt import delete_task, change_task_status
 from ApiManager.utils.testcase import get_time_stamp
 from httprunner import HttpRunner
+from ApiManager.utils.createdir import mk_convert_dir, mk_upload_dir
+
+from ApiManager.utils.zentao import xmind_to_zentao_csv_file
+from ApiManager.utils.utils import get_xmind_testsuites, get_xmind_testcase_list
 
 logger = logging.getLogger('HttpRunnerManager')
 
 # Create your views here.
-
 
 
 def login_check(func):
@@ -799,3 +805,84 @@ def echo(request):
             for i, line in enumerate(stdout):
                 request.websocket.send(bytes(line, encoding='utf8'))
             client.close()
+
+
+def xmind2testcase(request):
+    account = request.session["now_account"]
+    manage_info = {
+        'account': account
+    }
+    return render_to_response('xmind2testcase.html')
+
+
+class UploadForm(forms.Form):
+    # name = forms.CharField(max_length=50)
+    file = forms.FileField()
+
+
+def handle_upload(file, folder, user):
+
+    current = time.strftime("%Y-%m-%d", time.localtime())
+    format_name = user + '-' + current + '-'
+    with open(folder + '\\' + format_name + file.name, 'wb+') as destination:
+        for chunk in file.chunks():
+            destination.write(chunk)
+    return format_name + file.name
+
+
+def generate_testcase(request):
+    account = request.session["now_account"]
+    manage_info = {
+        'account': account
+    }
+    user = request.session["now_account"]
+
+    # here = os.path.abspath(os.path.dirname(__file__))
+    # upload_folder = os.path.join(here, 'uploads')
+    # convert_folder = os.path.join(here, 'convert')
+    # if not exists(upload_folder):
+    #     os.mkdir(upload_folder)
+    # if not exists(convert_folder):
+    #     os.mkdir(convert_folder)
+    # logger.info("*****create upload folder*****")
+    # logger.info(upload_folder)
+    upload_folder = mk_upload_dir()
+
+    if request.method == "POST":
+        form = UploadForm(request.FILES)
+        # if form.is_valid():
+        handle_file = handle_upload(request.FILES['file'], upload_folder, user)
+        # return render_to_response('preview1.html')
+        # else:
+        #     logger.info("*********valid error*****")
+        #     logger.error(form.errors)
+        #     print(form.cleaned_data)
+        xmind_file_pre = upload_folder + '\\' + request.FILES['file'].name
+        logger.info("*******" + xmind_file_pre + "************")
+        xmind_file = upload_folder + '\\' +  handle_file
+        logger.info("*************"+ xmind_file + "**************")
+        csv_file = xmind_to_zentao_csv_file(xmind_file)
+        test_suites = get_xmind_testsuites(xmind_file)
+        test_cases = get_xmind_testcase_list(xmind_file)
+        # name = request.FILES['file'].name
+        name = handle_file
+        suite_count = 0
+        for suite in test_suites:
+            suite_count += len(suite.sub_suites)
+        return render_to_response('preview1.html', {'name': name, 'suite': test_cases,
+                                                    'suite_count': suite_count, 'manage_info': manage_info})
+
+    logger.info("------out------")
+    return render_to_response('preview1.html')
+
+
+def file_download(request, name):
+    # user = request.session["now_account"]
+    logger.info("*****************")
+    # logger.info(kwargs)
+    # name = kwargs[0]
+    upload_folder = mk_upload_dir()
+    file = upload_folder + '\\' + name[:-6] + '.csv'
+    with open(file) as destination:
+        download_file = destination.read()
+    return render_to_response(download_file)
