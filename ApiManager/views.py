@@ -4,12 +4,12 @@ import os
 import shutil
 import sys
 import time
-from os.path import exists
 
 import paramiko
 from django import forms
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, StreamingHttpResponse
 from django.shortcuts import render_to_response, render
+from django.utils.encoding import escape_uri_path
 from django.utils.safestring import mark_safe
 from djcelery.models import PeriodicTask
 from dwebsocket import accept_websocket
@@ -32,6 +32,7 @@ from ApiManager.utils.createdir import mk_convert_dir, mk_upload_dir
 
 from ApiManager.utils.zentao import xmind_to_zentao_csv_file
 from ApiManager.utils.utils import get_xmind_testsuites, get_xmind_testcase_list
+from ApiManager.utils.excelfile import xmind2xlsx
 
 logger = logging.getLogger('HttpRunnerManager')
 
@@ -837,15 +838,6 @@ def generate_testcase(request):
     }
     user = request.session["now_account"]
 
-    # here = os.path.abspath(os.path.dirname(__file__))
-    # upload_folder = os.path.join(here, 'uploads')
-    # convert_folder = os.path.join(here, 'convert')
-    # if not exists(upload_folder):
-    #     os.mkdir(upload_folder)
-    # if not exists(convert_folder):
-    #     os.mkdir(convert_folder)
-    # logger.info("*****create upload folder*****")
-    # logger.info(upload_folder)
     upload_folder = mk_upload_dir()
 
     if request.method == "POST":
@@ -857,11 +849,10 @@ def generate_testcase(request):
         #     logger.info("*********valid error*****")
         #     logger.error(form.errors)
         #     print(form.cleaned_data)
-        xmind_file_pre = upload_folder + '\\' + request.FILES['file'].name
-        logger.info("*******" + xmind_file_pre + "************")
-        xmind_file = upload_folder + '\\' +  handle_file
-        logger.info("*************"+ xmind_file + "**************")
-        csv_file = xmind_to_zentao_csv_file(xmind_file)
+        # xmind_file_pre = upload_folder + '\\' + request.FILES['file'].name
+        xmind_file = upload_folder + '\\' + handle_file
+        # csv_file = xmind_to_zentao_csv_file(xmind_file)
+        xlsx_file = xmind2xlsx(xmind_file)
         test_suites = get_xmind_testsuites(xmind_file)
         test_cases = get_xmind_testcase_list(xmind_file)
         # name = request.FILES['file'].name
@@ -877,12 +868,22 @@ def generate_testcase(request):
 
 
 def file_download(request, name):
-    # user = request.session["now_account"]
-    logger.info("*****************")
-    # logger.info(kwargs)
-    # name = kwargs[0]
     upload_folder = mk_upload_dir()
-    file = upload_folder + '\\' + name[:-6] + '.csv'
-    with open(file) as destination:
-        download_file = destination.read()
-    return render_to_response(download_file)
+    logger.info("********************")
+    logger.info(name)
+    file = upload_folder + '\\' + name[:-6] + '.xlsx'
+
+    def file_iterator(filename, chunk_size=128):
+        with open(filename, 'rb') as destination:
+            while True:
+                c = destination.read(chunk_size)
+                if c:
+                    yield c
+                else:
+                    break
+    file_name = name[:-6] + '.xlsx'
+    response = StreamingHttpResponse(file_iterator(file))
+    response['Content-Type'] = 'application/octet-stream'
+    response['Content-Disposition'] = 'attachment;filename={}'.format(escape_uri_path(file_name))
+    return response
+

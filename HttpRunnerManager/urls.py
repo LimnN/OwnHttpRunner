@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.views.generic import RedirectView
-
+from ApiManager import views
 from HttpRunnerManager.activator import process
 
 urlpatterns = [
@@ -24,5 +24,6 @@ urlpatterns = [
     url(r'^favicon\.ico$', RedirectView.as_view(url='/static/assets/img/favicon.ico')),
     url('^(?P<app>(\w+))/(?P<function>(\w+))/$', process),
     url('^(?P<app>(\w+))/(?P<function>(\w+))/(?P<id>(\w+))/$', process),
-    url('^(?P<app>(\w+))/(?P<function>(\w+))/(.*).xmind/$', process)
+    url('^api/file_download/(?P<name>(.*).xmind)/$', views.file_download, name="file_download")
+
 ]

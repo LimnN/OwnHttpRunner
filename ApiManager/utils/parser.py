@@ -118,9 +118,9 @@ def is_testcase_topic(case_dict):
     if priority:
         return True
 
-    children = case_dict.get('topics', [])
-    if children:
-        return False
+    # children = case_dict.get('topics', [])
+    # if children:
+    #     return False
 
     return True
 
@@ -240,11 +240,3 @@ def get_test_result(markers):
         result = 0
 
     return result
-
-
-
-
-
-
-
-

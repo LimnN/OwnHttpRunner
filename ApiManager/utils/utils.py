@@ -51,7 +51,8 @@ def get_xmind_testsuite_list(xmind_file):
     for testsuite in testsuite_list:
         product_statistics = {'case_num': 0, 'non_execution': 0, 'pass': 0, 'failed': 0, 'blocked': 0, 'skipped': 0}
         for sub_suite in testsuite.sub_suites:
-            suite_statistics = {'case_num': len(sub_suite.testcase_list), 'non_execution': 0, 'pass': 0, 'failed': 0, 'blocked': 0, 'skipped': 0}
+            suite_statistics = {'case_num': len(sub_suite.testcase_list), 'non_execution': 0,
+                                'pass': 0, 'failed': 0, 'blocked': 0, 'skipped': 0}
             for case in sub_suite.testcase_list:
                 if case.result == 0:
                     suite_statistics['non_execution'] += 1
@@ -64,7 +65,8 @@ def get_xmind_testsuite_list(xmind_file):
                 elif case.result == 4:
                     suite_statistics['skipped'] += 1
                 else:
-                    logging.warning('This testcase result is abnormal: %s, please check it: %s', case.result, case.to_dict())
+                    logging.warning('This testcase result is abnormal: %s, please check it: %s',
+                                    case.result, case.to_dict())
             sub_suite.statistics = suite_statistics
             for item in product_statistics:
                 product_statistics[item] += suite_statistics[item]
@@ -114,7 +116,8 @@ def xmind_testsuite_to_json_file(xmind_file):
 
     with open(testsuite_json_file, 'w', encoding='utf8') as f:
         f.write(json.dumps(testsuites, indent=4, separators=(',', ': ')))
-        logging.info('Convert XMind file(%s) to a testsuite json file(%s) successfully!', xmind_file, testsuite_json_file)
+        logging.info('Convert XMind file(%s) to a testsuite json file(%s) successfully!',
+                     xmind_file, testsuite_json_file)
 
     return testsuite_json_file
 

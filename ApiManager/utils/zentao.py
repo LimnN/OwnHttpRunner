@@ -12,6 +12,7 @@ Zentao official document about import CSV testcase file: https://www.zentao.net/
 """
 
 
+# noinspection PyShadowingNames
 def xmind_to_zentao_csv_file(xmind_file):
     """Convert XMind file to a zentao csv file"""
     xmind_file = get_absolute_path(xmind_file)
@@ -29,7 +30,7 @@ def xmind_to_zentao_csv_file(xmind_file):
         logging.info('The zentao csv file already exists, return it directly: %s', zentao_file)
         return zentao_file
 
-    with open(zentao_file, 'w', encoding='utf-8-sig') as f:
+    with open(zentao_file, 'w', encoding='utf-8') as f:
         writer = csv.writer(f)
         writer.writerows(zentao_testcase_rows)
         logging.info('Convert XMind file(%s) to a zentao csv file(%s) successfully!', xmind_file, zentao_file)
@@ -46,7 +47,8 @@ def gen_a_testcase_row(testcase_dict):
     case_priority = gen_case_priority(testcase_dict['importance'])
     case_type = gen_case_type(testcase_dict['execution_type'])
     case_apply_phase = '迭代测试'
-    row = [case_module, case_title, case_precontion, case_step, case_expected_result, case_keyword, case_priority, case_type, case_apply_phase]
+    row = [case_module, case_title, case_precontion, case_step, case_expected_result, case_keyword,
+           case_priority, case_type, case_apply_phase]
     return row
 
 
@@ -91,4 +93,4 @@ def gen_case_type(case_type):
 if __name__ == '__main__':
     xmind_file = '../docs/zentao_testcase_template.xmind'
     zentao_csv_file = xmind_to_zentao_csv_file(xmind_file)
-    print('Conver the xmind file to a zentao csv file succssfully: %s', zentao_csv_file)
+    print('Convert the xmind file to a zentao csv file successfully: %s', zentao_csv_file)
