@@ -20,7 +20,7 @@ def xmind2xlsx(xmind_file):
     wb = Workbook()
     ws = wb.active
     ws.title = 'testcase sheet'
-
+    # TODO: modify excel style
     ws.sheet_properties.pageSetUpPr.fitToPage = True
     ws.page_setup.fitToPage = True
     ws.page_setup.fitToHeight = True
