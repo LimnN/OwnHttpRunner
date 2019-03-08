@@ -68,6 +68,7 @@ def xmind2xlsx(xmind_file):
 
 
 def gen_a_testcase_row(testcase_dict):
+    print(testcase_dict)
     case_product = testcase_dict['product']
     case_module = gen_case_module(testcase_dict['suite'])
     case_title = testcase_dict['name']
@@ -121,6 +122,6 @@ def gen_case_type(case_type):
 
 
 if __name__ == '__main__':
-    xmind_file = 'C:\\Users\\admin\Desktop\无优先级.xmind'
+    xmind_file = 'C:\\Users\\admin\Desktop\\6级用例.xmind'
     xlsx_file = xmind2xlsx(xmind_file)
     print('Convert the xmind file to a zentao csv file successfully: %s', xlsx_file)
