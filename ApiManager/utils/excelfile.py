@@ -16,7 +16,6 @@ def xmind2xlsx(xmind_file):
     xmind_file = get_absolute_path(xmind_file)
     logging.info('Start converting XMind file(%s) to zentao file...', xmind_file)
     testcases = get_xmind_testcase_list(xmind_file)
-    # print(testcases)
     wb = Workbook()
     ws = wb.active
     ws.title = 'testcase sheet'
@@ -26,7 +25,7 @@ def xmind2xlsx(xmind_file):
     ws.page_setup.fitToHeight = True
     ws.page_setup.fitToWidth = 3
 
-    fileheader = ["产品名称", "所属模块", "用例标题", "步骤", "预期", "关键词", "优先级", "用例类型", "适用阶段"]
+    fileheader = ["产品名称", "所属模块", "功能子模块", "用例标题", "步骤", "预期", "关键词", "优先级", "用例类型", "适用阶段"]
     testcase_rows = []
     for testcase in testcases:
         row = gen_a_testcase_row(testcase)
@@ -68,9 +67,9 @@ def xmind2xlsx(xmind_file):
 
 
 def gen_a_testcase_row(testcase_dict):
-    print(testcase_dict)
     case_product = testcase_dict['product']
     case_module = gen_case_module(testcase_dict['suite'])
+    case_submodule = testcase_dict['module']
     case_title = testcase_dict['name']
     # case_precontion = testcase_dict['preconditions']
     case_step, case_expected_result = gen_case_step_and_expected_result(testcase_dict['steps'])
@@ -78,7 +77,7 @@ def gen_a_testcase_row(testcase_dict):
     case_priority = gen_case_priority(testcase_dict['importance'])
     case_type = gen_case_type(testcase_dict['execution_type'])
     case_apply_phase = '迭代测试'
-    row = [case_product, case_module, case_title, case_step,
+    row = [case_product, case_module, case_submodule, case_title, case_step,
            case_expected_result, case_keyword, case_priority, case_type, case_apply_phase]
     return row
 
@@ -123,5 +122,6 @@ def gen_case_type(case_type):
 
 if __name__ == '__main__':
     xmind_file = 'C:\\Users\\admin\Desktop\\6级用例.xmind'
+    # xmind_file = 'C:\\Users\\admin\Desktop\\5级.xmind'
     xlsx_file = xmind2xlsx(xmind_file)
     print('Convert the xmind file to a zentao csv file successfully: %s', xlsx_file)

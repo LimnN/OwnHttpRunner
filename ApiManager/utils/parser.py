@@ -97,8 +97,10 @@ def parse_testsuite(suite_dict):
 
 def recurse_parse_testcase(case_dict, parent=None):
     if is_testcase_topic(case_dict):
-        case = parse_a_testcase(case_dict, parent)
-        yield case
+        cases = case_dict['topics']
+        for case in cases:
+            case_re = parse_a_testcase(case, parent, case_dict['title'])
+            yield case_re
     else:
         if not parent:
             parent = []
@@ -125,12 +127,11 @@ def is_testcase_topic(case_dict):
     return True
 
 
-def parse_a_testcase(case_dict, parent):
+def parse_a_testcase(case_dict, parent, module):
     testcase = TestCase()
     topics = parent + [case_dict] if parent else [case_dict]
-
     testcase.name = gen_testcase_title(topics)
-
+    testcase.module = module
     preconditions = gen_testcase_preconditions(topics)
     testcase.preconditions = preconditions if preconditions else '无'
 
@@ -139,9 +140,10 @@ def parse_a_testcase(case_dict, parent):
 
     testcase.importance = get_priority(case_dict) or 2
 
-    step_dict_list = case_dict.get('topics', [])
-    if step_dict_list:
-        testcase.steps = parse_test_steps(step_dict_list)
+    step_list = case_dict.get('topics', [])
+
+    if step_list:
+        testcase.steps = parse_test_steps(step_list)
 
     # the result of the testcase take precedence over the result of the teststep
     testcase.result = get_test_result(case_dict['markers'])
@@ -158,6 +160,7 @@ def parse_a_testcase(case_dict, parent):
             testcase.result = step.result  # there is no need to judge where test step are ignored
 
     logging.debug('finds a testcase: %s', testcase.to_dict())
+
     return testcase
 
 
@@ -196,17 +199,19 @@ def gen_testcase_summary(topics):
 
 def parse_test_steps(step_dict_list):
     steps = []
-
     for step_num, step_dict in enumerate(step_dict_list, 1):
         test_step = parse_a_test_step(step_dict)
         test_step.step_number = step_num
         steps.append(test_step)
-
+    # print(steps)
     return steps
 
 
 def parse_a_test_step(step_dict):
     test_step = TestStep()
+
+    # step = step_dict['topics']
+    # test_step.actions = step[]
     test_step.actions = step_dict['title']
 
     expected_topics = step_dict.get('topics', [])
@@ -220,6 +225,7 @@ def parse_a_test_step(step_dict):
         test_step.result = get_test_result(markers)
 
     logging.debug('finds a teststep: %s', test_step.to_dict())
+    # print(test_step.to_dict())
     return test_step
 
 

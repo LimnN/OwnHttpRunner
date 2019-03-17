@@ -47,7 +47,7 @@ class TestSuite(object):
 
 class TestCase(object):
 
-    def __init__(self, name='', version=1, summary='', preconditions='', execution_type=1, importance=2, estimated_exec_duration=3, status=7, result=0, steps=None):
+    def __init__(self, module='', name='', version=1, summary='', preconditions='', execution_type=1, importance=2, estimated_exec_duration=3, status=7, result=0, steps=None):
         """
         TestCase
         :param name: test case name
@@ -61,6 +61,7 @@ class TestCase(object):
         :param result: non-execution:0, pass:1, failed:2, blocked:3, skipped:4
         :param steps: test case step list
         """
+        self.module = module
         self.name = name
         self.version = version
         self.summary = summary
@@ -74,6 +75,7 @@ class TestCase(object):
 
     def to_dict(self):
         data = {
+            'module': self.module,
             'name': self.name,
             'version': self.version,  # TODO(devin): get version content
             'summary': self.summary,
