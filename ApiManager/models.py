@@ -125,3 +125,61 @@ class TestSuite(BaseTable):
     belong_project = models.ForeignKey(ProjectInfo, on_delete=models.CASCADE)
     suite_name = models.CharField(max_length=100, null=False)
     include = models.TextField(null=False)
+
+
+class XmindCase(BaseTable):
+    class Meta:
+        verbose_name = 'Xmind用例'
+        db_table = 'XmindCases'
+
+    '''test case json example
+    {
+        "module": "子模块1",
+        "name": "用例1",
+        "version": 1,
+        "summary": "用例1",
+        "preconditions": "无",
+        "execution_type": 1,
+        "importance": 2,
+        "estimated_exec_duration": 3,
+        "status": 7,
+        "result": 0,
+        "steps": [
+            {
+                "step_number": 1,
+                "actions": "步骤1",
+                "expectedresults": "预期1",
+                "execution_type": 1,
+                "result": 0
+            },
+            {
+                "step_number": 2,
+                "actions": "步骤2",
+                "expectedresults": "预期2",
+                "execution_type": 1,
+                "result": 0
+            }
+        ],
+        "product": "6级用例",
+        "suite": "模块A"
+    }
+    '''
+
+    # 用例标题
+    name = models.CharField(max_length=256, null=False)
+    # 项目名称
+    belong_project = models.CharField('所属项目', max_length=50, null=False)
+    # 功能模块
+    suite = models.CharField('所属模块', max_length=100, null=False)
+    # 功能子模块
+    belong_module = models.CharField('功能子模块', max_length=100, null=False)
+    # 步骤预期
+    steps = models.CharField('步骤', max_length=256)
+    # 属性
+    attributes = models.CharField('属性', max_length=100)
+    # 预期
+    # expectResult = models.CharField('预期', max_length=256)
+    # 用户
+    author = models.IntegerField('创建用户', null=False)
+    # xmind文件路径
+    file_locate = models.CharField('xmind文件路径', max_length=256, null=False)

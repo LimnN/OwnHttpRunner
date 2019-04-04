@@ -209,9 +209,6 @@ def parse_test_steps(step_dict_list):
 
 def parse_a_test_step(step_dict):
     test_step = TestStep()
-
-    # step = step_dict['topics']
-    # test_step.actions = step[]
     test_step.actions = step_dict['title']
 
     expected_topics = step_dict.get('topics', [])

@@ -21,17 +21,17 @@ from ApiManager.tasks import main_hrun
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
     set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_modules, upload_file_logic, \
     init_filter_session, get_total_values, timestamp_to_datetime
-from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data, copy_test_data, \
+from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data, \
+    copy_test_data, \
     del_report_data, add_suite_data, copy_suite_data, del_suite_data, edit_suite_data, add_test_reports
 from ApiManager.utils.pagination import get_pager_info
 from ApiManager.utils.runner import run_by_batch, run_test_by_type
 from ApiManager.utils.task_opt import delete_task, change_task_status
 from ApiManager.utils.testcase import get_time_stamp
 from httprunner import HttpRunner
-from ApiManager.utils.createdir import mk_convert_dir, mk_upload_dir
+from ApiManager.utils.createdir import mk_upload_dir
 
-from ApiManager.utils.zentao import xmind_to_zentao_csv_file
-from ApiManager.utils.utils import get_xmind_testsuites, get_xmind_testcase_list
+from ApiManager.utils.utils import get_xmind_testsuites, get_xmind_testcase_list, case_to_db
 from ApiManager.utils.excelfile import xmind2xlsx
 
 logger = logging.getLogger('HttpRunnerManager')
@@ -824,7 +824,8 @@ class UploadForm(forms.Form):
 def handle_upload(file, folder, user):
 
     current = time.strftime("%Y-%m-%d", time.localtime())
-    format_name = user + '-' + current + '-'
+    timestamp = str(int(time.time()))
+    format_name = user + '-' + current + '(' + timestamp + ')' + '-'
     with open(folder + '\\' + format_name + file.name, 'wb+') as destination:
         for chunk in file.chunks():
             destination.write(chunk)
@@ -841,21 +842,14 @@ def generate_testcase(request):
     upload_folder = mk_upload_dir()
 
     if request.method == "POST":
-        form = UploadForm(request.FILES)
+        # form = UploadForm(request.FILES)
         # if form.is_valid():
         handle_file = handle_upload(request.FILES['file'], upload_folder, user)
-        # return render_to_response('preview1.html')
-        # else:
-        #     logger.info("*********valid error*****")
-        #     logger.error(form.errors)
-        #     print(form.cleaned_data)
-        # xmind_file_pre = upload_folder + '\\' + request.FILES['file'].name
         xmind_file = upload_folder + '\\' + handle_file
-        # csv_file = xmind_to_zentao_csv_file(xmind_file)
         xlsx_file = xmind2xlsx(xmind_file)
         test_suites = get_xmind_testsuites(xmind_file)
         test_cases = get_xmind_testcase_list(xmind_file)
-        # name = request.FILES['file'].name
+        case_to_db(test_cases)
         name = handle_file
         suite_count = 0
         for suite in test_suites:

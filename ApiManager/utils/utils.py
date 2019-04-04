@@ -5,6 +5,8 @@ import os
 import xmind
 import logging
 from .parser import xmind_to_testsuites
+from ApiManager.models import XmindCase
+from django.utils import timezone
 
 
 def get_absolute_path(path):
@@ -138,3 +140,23 @@ def xmind_testcase_to_json_file(xmind_file):
         logging.info('Convert XMind file(%s) to a testcase json file(%s) successfully!', xmind_file, testcase_json_file)
 
     return testcase_json_file
+
+
+def case_to_db(testcases, user, file):
+    """
+    :param testcases:
+    :param user:
+    :param file:
+    :return:
+    table structure:
+    项目 模块 子模块 标题 步骤/预期 作者 文件路径
+    """
+    for case in testcases:
+        xmindcase = XmindCase
+        xmindcase.belong_project = case['product']
+        xmindcase.suite = case['suite']
+        xmindcase.belong_module = case['module']
+        xmindcase.steps = case['steps']
+        xmindcase.name = case['name']
+
+        # xmindcase.save()
