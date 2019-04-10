@@ -289,3 +289,8 @@ table td.long-name:hover .long-name-info {
     bottom: 50px;
     margin: auto;
 }
+
+.back {
+    position: absolute;
+    left: 20px;
+}

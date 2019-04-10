@@ -891,6 +891,10 @@ def record_view(request, name):
     file = upload_folder + '\\' + name
     test_cases = get_case_from_db(file)
     suite_count = 0
+    suites = []
+    for case in test_cases:
+        suites.append(case['suite'])
+    suite_count = len(set(suites))
     name = name
     return render_to_response('preview.html', {'name': name, 'suite': test_cases, 'suite_count': suite_count,
                                                'manage_info': manage_info})

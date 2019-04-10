@@ -11,6 +11,9 @@
 <body>
 <div class="splash-container">
     <div class="splash">
+        <div class="back">
+            <a href="/api/index">BACK</a>
+        </div>
         <h1>
             Xmind to TestCase
         </h1>
@@ -66,7 +69,7 @@
                 {% endif %}
 
                 <span class="current">
-                    Page {{ records.number }} of {{ records.paginator.num_pages }}.
+                    Page {{ records.number }} of {{ records.paginator.num_pages }}
                 </span>
 
                 {% if records.has_next %}

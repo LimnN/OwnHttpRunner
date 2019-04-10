@@ -201,19 +201,22 @@ def get_case_from_db(file):
     query = XmindCase.objects.filter(xmind_file=file).values('suite', 'belong_project', 'steps', 'belong_module',
                                                              'name', 'attributes')
     for case in query:
-        # change steps string to list
-        # change attributes to importance & expecteresults
         suite = case['suite']
         product = case['belong_project']
-        steps = case['steps']
-        module = case['belong_module']
-        name = case['name']
-        # attributes = json.loads(case['attributes'].replace("'", "\""))
-        attr = case['attributes'].replace('\'', '"')
-        attributes = json.loads(attr)
-        importance = attributes['importance']
-        execution_type = attributes['execution_type']
-        casedict = {"module": module, "name": name, "execution_type": execution_type, "importance": importance,
-                    "steps": json.loads(steps.replace('\'', '"')), "product": product, "suite": suite}
-        test_cases.append(casedict)
+        dbstep = case['steps']
+        print('************' + case['name'])
+        try:
+            steps = json.loads(dbstep.replace(r'"',r'\"').replace('\'', '"'))
+            module = case['belong_module']
+            name = case['name']
+            attr = case['attributes'].replace('\'', '"')
+            attributes = json.loads(attr)
+            importance = attributes['importance']
+            execution_type = attributes['execution_type']
+            casedict = {"module": module, "name": name, "execution_type": execution_type, "importance": importance,
+                        "steps": steps, "product": product, "suite": suite}
+            test_cases.append(casedict)
+        except Exception as e:
+            print(e)
+
     return test_cases

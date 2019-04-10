@@ -20,6 +20,7 @@
     <tr>
         <th width="5%">#</th>
         <th width="10%">Suite</th>
+        <th width="10%">Module</th>
         <th>Title</th>
         <th width="200px">Attributes</th>
         <th width="23%">Steps</th>
@@ -30,6 +31,7 @@
         <tr>
             <td>{{ forloop.counter }}</td>
             <td>{{ test.suite }}</td>
+            <td>{{ test.module }}</td>
             <td {% if test.name|length > 100 %}class="long-name" {% endif %}>{{ test.name }}
                 {% if test.name|length > 100 %}
                     <span class="long-name-info">Warn: test name might be too long: {{ test.name|length }}!</span>
