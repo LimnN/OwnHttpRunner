@@ -810,7 +810,7 @@ def echo(request):
             client.close()
 
 
-# TODO account check
+@login_check
 def xmind2testcase(request):
     account = request.session["now_account"]
     manage_info = {
@@ -833,6 +833,7 @@ class UploadForm(forms.Form):
     file = forms.FileField()
 
 
+@login_check
 def generate_testcase(request):
     account = request.session["now_account"]
     manage_info = {
@@ -860,6 +861,7 @@ def generate_testcase(request):
     return render_to_response('preview.html')
 
 
+@login_check
 def file_download(request, name):
     upload_folder = mk_upload_dir()
     file = upload_folder + '\\' + name
@@ -879,6 +881,7 @@ def file_download(request, name):
     return response
 
 
+@login_check
 def record_view(request, name):
     account = request.session["now_account"]
     manage_info = {
@@ -893,6 +896,7 @@ def record_view(request, name):
                                                'manage_info': manage_info})
 
 
+@login_check
 def delete_record(request, name):
     upload_folder = mk_upload_dir()
     file = upload_folder + '\\' + name
