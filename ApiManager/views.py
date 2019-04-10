@@ -11,6 +11,7 @@ from django.shortcuts import render_to_response, render
 from django.utils.encoding import escape_uri_path
 from django.utils.safestring import mark_safe
 from djcelery.models import PeriodicTask
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from dwebsocket import accept_websocket
 
 from ApiManager import separator
@@ -33,6 +34,7 @@ from ApiManager.utils.createdir import mk_upload_dir
 from ApiManager.utils.utils import get_xmind_testsuites, get_xmind_testcase_list, case_to_db, get_recent_records, \
     get_case_from_db, handle_upload
 from ApiManager.utils.excelfile import xmind2xlsx
+from ApiManager.models import XmindCase
 
 logger = logging.getLogger('HttpRunnerManager')
 
@@ -814,7 +816,15 @@ def xmind2testcase(request):
     manage_info = {
         'account': account
     }
-    records = get_recent_records()
+    records_list = get_recent_records()
+    paginator = Paginator(records_list, 10)
+    page = request.GET.get('page')
+    try:
+        records = paginator.page(page)
+    except PageNotAnInteger:
+        records = paginator.page(1)
+    except EmptyPage:
+        records = paginator.page(paginator.num_pages)
     return render_to_response('xmind2testcase.html', {"records": records})
 
 
@@ -840,8 +850,6 @@ def generate_testcase(request):
         xlsx_file = xmind2xlsx(xmind_file)
         test_suites = get_xmind_testsuites(xmind_file)
         test_cases = get_xmind_testcase_list(xmind_file)
-        logger.info("*********test cases in preview********")
-        logger.info(test_cases)
         case_to_db(test_cases, user, xmind_file, xlsx_file, request.FILES['file'])
         name = handle_file
         suite_count = 0
@@ -849,15 +857,12 @@ def generate_testcase(request):
             suite_count += len(suite.sub_suites)
         return render_to_response('preview.html', {'name': name, 'suite': test_cases, 'suite_count': suite_count,
                                                    'manage_info': manage_info})
-
-    logger.info("------out------")
     return render_to_response('preview.html')
 
 
 def file_download(request, name):
     upload_folder = mk_upload_dir()
     file = upload_folder + '\\' + name
-    # file = upload_folder + '\\' + name[:-6] + '.xlsx'
 
     def file_iterator(filename, chunk_size=128):
         with open(filename, 'rb') as destination:
@@ -868,7 +873,6 @@ def file_download(request, name):
                 else:
                     break
     file_name = name
-    # file_name = name[:-6] + '.xlsx'
     response = StreamingHttpResponse(file_iterator(file))
     response['Content-Type'] = 'application/octet-stream'
     response['Content-Disposition'] = 'attachment;filename={}'.format(escape_uri_path(file_name))
@@ -884,11 +888,22 @@ def record_view(request, name):
     file = upload_folder + '\\' + name
     test_cases = get_case_from_db(file)
     suite_count = 0
-    name = name.split('-')[-1]
-    return render_to_response('recordview.html', {'name': name, 'suite': test_cases, 'suite_count': suite_count,
-                                                  'manage_info': manage_info})
+    name = name
+    return render_to_response('preview.html', {'name': name, 'suite': test_cases, 'suite_count': suite_count,
+                                               'manage_info': manage_info})
 
 
-# TODO record delete
-def delete_record():
-    pass
+def delete_record(request, name):
+    upload_folder = mk_upload_dir()
+    file = upload_folder + '\\' + name
+    XmindCase.objects.filter(xmind_file=file).delete()
+    records_list = get_recent_records()
+    paginator = Paginator(records_list, 10)
+    page = request.GET.get('page')
+    try:
+        records = paginator.page(page)
+    except PageNotAnInteger:
+        records = paginator.page(1)
+    except EmptyPage:
+        records = paginator.page(paginator.num_pages)
+    return render_to_response('xmind2testcase.html', {"records": records})

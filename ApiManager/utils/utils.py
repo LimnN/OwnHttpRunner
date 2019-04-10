@@ -155,7 +155,6 @@ def handle_upload(file, folder, user):
     return format_name + file.name
 
 
-# TODO update project
 def case_to_db(testcases, user, xmind_file, xlsx_file, filename):
     """
     :param testcases:
@@ -185,14 +184,15 @@ def case_to_db(testcases, user, xmind_file, xlsx_file, filename):
 
 def get_recent_records():
     records = []
-    files = XmindCase.objects.values('file_name').distinct()
+    files = XmindCase.objects.values('xmind_file').distinct()
     for file in files:
-        timequery = XmindCase.objects.filter(file_name=file['file_name']).values('create_time')[:1]
-        time = list(timequery)[0]['create_time'].strftime("%Y-%m-%d %H:%M:%S")
-        filequery = XmindCase.objects.filter(file_name=file['file_name']).values('xlsx_file', 'xmind_file').distinct()
-        xmind = filequery[0]['xmind_file'].split('\\')[-1]
+        timequery = XmindCase.objects.filter(xmind_file=file['xmind_file']).values('create_time')[:1]
+        filetime = list(timequery)[0]['create_time'].strftime("%Y-%m-%d %H:%M:%S")
+        filequery = XmindCase.objects.filter(xmind_file=file['xmind_file']).values('xlsx_file', 'xmind_file').distinct()
+        xmindfile = filequery[0]['xmind_file'].split('\\')[-1]
         xlsx = filequery[0]['xlsx_file'].split('\\')[-1]
-        records.append({"name": file['file_name'], "time": time, "xmind_file": xmind, "xlsx_file": xlsx})
+        records.append({"name": xmindfile, "time": filetime, "xmind_file": xmindfile, "xlsx_file": xlsx})
+    records.reverse()
     return records
 
 

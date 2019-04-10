@@ -82,7 +82,7 @@
 }
 
 .splash-container {
-    background: #00b36b;
+    background: #5eb95e;
     height: 100%;
     overflow: hidden;
     position: fixed !important;
@@ -277,4 +277,15 @@ table td.long-name {
 
 table td.long-name:hover .long-name-info {
     visibility: visible;
+}
+
+.pagination {
+    text-align: center
+}
+
+.step-links {
+    color: #0e90d2;
+    position: absolute;
+    bottom: 50px;
+    margin: auto;
 }
