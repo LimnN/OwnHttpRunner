@@ -3,7 +3,6 @@ import logging
 import os
 import shutil
 import sys
-import time
 
 import paramiko
 from django import forms
@@ -31,7 +30,8 @@ from ApiManager.utils.testcase import get_time_stamp
 from httprunner import HttpRunner
 from ApiManager.utils.createdir import mk_upload_dir
 
-from ApiManager.utils.utils import get_xmind_testsuites, get_xmind_testcase_list, case_to_db
+from ApiManager.utils.utils import get_xmind_testsuites, get_xmind_testcase_list, case_to_db, get_recent_records, \
+    get_case_from_db, handle_upload
 from ApiManager.utils.excelfile import xmind2xlsx
 
 logger = logging.getLogger('HttpRunnerManager')
@@ -808,28 +808,19 @@ def echo(request):
             client.close()
 
 
+# TODO account check
 def xmind2testcase(request):
     account = request.session["now_account"]
     manage_info = {
         'account': account
     }
-    return render_to_response('xmind2testcase.html')
+    records = get_recent_records()
+    return render_to_response('xmind2testcase.html', {"records": records})
 
 
 class UploadForm(forms.Form):
     # name = forms.CharField(max_length=50)
     file = forms.FileField()
-
-
-def handle_upload(file, folder, user):
-
-    current = time.strftime("%Y-%m-%d", time.localtime())
-    timestamp = str(int(time.time()))
-    format_name = user + '-' + current + '(' + timestamp + ')' + '-'
-    with open(folder + '\\' + format_name + file.name, 'wb+') as destination:
-        for chunk in file.chunks():
-            destination.write(chunk)
-    return format_name + file.name
 
 
 def generate_testcase(request):
@@ -849,23 +840,24 @@ def generate_testcase(request):
         xlsx_file = xmind2xlsx(xmind_file)
         test_suites = get_xmind_testsuites(xmind_file)
         test_cases = get_xmind_testcase_list(xmind_file)
-        case_to_db(test_cases)
+        logger.info("*********test cases in preview********")
+        logger.info(test_cases)
+        case_to_db(test_cases, user, xmind_file, xlsx_file, request.FILES['file'])
         name = handle_file
         suite_count = 0
         for suite in test_suites:
             suite_count += len(suite.sub_suites)
-        return render_to_response('preview1.html', {'name': name, 'suite': test_cases,
-                                                    'suite_count': suite_count, 'manage_info': manage_info})
+        return render_to_response('preview.html', {'name': name, 'suite': test_cases, 'suite_count': suite_count,
+                                                   'manage_info': manage_info})
 
     logger.info("------out------")
-    return render_to_response('preview1.html')
+    return render_to_response('preview.html')
 
 
 def file_download(request, name):
     upload_folder = mk_upload_dir()
-    logger.info("********************")
-    logger.info(name)
-    file = upload_folder + '\\' + name[:-6] + '.xlsx'
+    file = upload_folder + '\\' + name
+    # file = upload_folder + '\\' + name[:-6] + '.xlsx'
 
     def file_iterator(filename, chunk_size=128):
         with open(filename, 'rb') as destination:
@@ -875,9 +867,28 @@ def file_download(request, name):
                     yield c
                 else:
                     break
-    file_name = name[:-6] + '.xlsx'
+    file_name = name
+    # file_name = name[:-6] + '.xlsx'
     response = StreamingHttpResponse(file_iterator(file))
     response['Content-Type'] = 'application/octet-stream'
     response['Content-Disposition'] = 'attachment;filename={}'.format(escape_uri_path(file_name))
     return response
 
+
+def record_view(request, name):
+    account = request.session["now_account"]
+    manage_info = {
+        'account': account
+    }
+    upload_folder = mk_upload_dir()
+    file = upload_folder + '\\' + name
+    test_cases = get_case_from_db(file)
+    suite_count = 0
+    name = name.split('-')[-1]
+    return render_to_response('recordview.html', {'name': name, 'suite': test_cases, 'suite_count': suite_count,
+                                                  'manage_info': manage_info})
+
+
+# TODO record delete
+def delete_record():
+    pass

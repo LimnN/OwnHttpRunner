@@ -12,9 +12,8 @@
 <div class="header">
     <h1>{{ name }} - Preview</h1>
     <h2>TestSuites: {{ suite_count }} / TestCases: {{ suite | length }}
-        / <a href="{{ url_for("download_zentao_file",filename= name) }}">Get Zentao CSV</a>
-        / <a href="{{ url_for("download_testlink_file",filename= name) }}">Get TestLink XML</a>
-        / <a href="{{ url_for("index") }}">Go Back</a></h2>
+        / <a href="/api/file_download/{{ name|slice:':-6'|add:'.xlsx' }}/">download_xlsx_file</a>
+        / <a href="/api/xmind2testcase/">Go Back</a></h2>
 </div>
 <table class="pure-table tests-table">
     <thead>
@@ -29,10 +28,10 @@
     <tbody>
     {% for test in suite %}
         <tr>
-            <td>{{ loop.index }}</td>
+            <td>{{ forloop.counter }}</td>
             <td>{{ test.suite }}</td>
-            <td {% if test.name|length>100 %}class="long-name" {% endif %}>{{ test.name }}
-                {% if test.name|length>100 %}
+            <td {% if test.name|length > 100 %}class="long-name" {% endif %}>{{ test.name }}
+                {% if test.name|length > 100 %}
                     <span class="long-name-info">Warn: test name might be too long: {{ test.name|length }}!</span>
                 {% endif %}
             </td>
@@ -45,14 +44,14 @@
                     <div class="pure-button tag-info tooltip">PreCond.
                         <p class="tooltiptext">
                             <b>Preconditions:</b> <br>
-                            {{ test.preconditions | replace('\n','<br>') |safe }}
+                            {{ test.preconditions|linebreaksbr|safe }}
                         </p></div>
                 {% endif %}
                 {% if test.summary %}
                     <div class="pure-button tag-warn tooltip">Summary
                         <p class="tooltiptext">
                             <b>Summary:</b> <br>
-                            {{ test.summary | replace('\n','<br>') |safe }}
+                            {{ test.summary|linebreaksbr|safe }}
                         </p></div>
                 {% endif %}
             </td>

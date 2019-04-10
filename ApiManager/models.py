@@ -174,7 +174,7 @@ class XmindCase(BaseTable):
     # 功能子模块
     belong_module = models.CharField('功能子模块', max_length=100, null=False)
     # 步骤预期
-    steps = models.CharField('步骤', max_length=256)
+    steps = models.TextField('步骤')
     # 属性
     attributes = models.CharField('属性', max_length=100)
     # 预期
@@ -182,4 +182,11 @@ class XmindCase(BaseTable):
     # 用户
     author = models.IntegerField('创建用户', null=False)
     # xmind文件路径
-    file_locate = models.CharField('xmind文件路径', max_length=256, null=False)
+    # file_locate = models.CharField('xmind文件路径', max_length=256, null=False)
+    # file name
+    file_name = models.CharField('filename', max_length=256, null=False)
+    # xmind
+    xmind_file = models.FileField('xmind', max_length=256, null=False)
+    # xlsx
+    xlsx_file = models.FileField('xlsx', max_length=256, null=False)
+    # objects = XmindCaseManager()

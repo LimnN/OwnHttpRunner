@@ -87,7 +87,6 @@ class ModuleInfoManager(models.Manager):
                 return self.get(id=module_name)
 
 
-
 '''用例信息表操作'''
 
 
@@ -155,3 +154,7 @@ class EnvInfoManager(models.Manager):
 
     def delete_env(self, index):
         self.get(id=index).delete()
+
+
+# class XmindCaseManager(models.XmindCase):
+#     pass

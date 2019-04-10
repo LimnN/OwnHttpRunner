@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^favicon\.ico$', RedirectView.as_view(url='/static/assets/img/favicon.ico')),
     url('^(?P<app>(\w+))/(?P<function>(\w+))/$', process),
     url('^(?P<app>(\w+))/(?P<function>(\w+))/(?P<id>(\w+))/$', process),
-    url('^api/file_download/(?P<name>(.*).xmind)/$', views.file_download, name="file_download")
-
+    url('^api/file_download/(?P<name>(.*).xmind)/$', views.file_download, name="file_download"),
+    url('^api/file_download/(?P<name>(.*).xlsx)/$', views.file_download, name="file_download"),
+    url('^api/record_view/(?P<name>(.*).xmind)/$', views.record_view, name="record_view")
 ]

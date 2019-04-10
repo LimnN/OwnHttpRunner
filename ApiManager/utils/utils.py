@@ -4,9 +4,11 @@ import json
 import os
 import xmind
 import logging
+import time
+
 from .parser import xmind_to_testsuites
-from ApiManager.models import XmindCase
-from django.utils import timezone
+from ApiManager.models import XmindCase, UserInfo
+# from django.utils import timezone
 
 
 def get_absolute_path(path):
@@ -142,21 +144,76 @@ def xmind_testcase_to_json_file(xmind_file):
     return testcase_json_file
 
 
-def case_to_db(testcases, user, file):
+def handle_upload(file, folder, user):
+
+    current = time.strftime("%Y-%m-%d", time.localtime())
+    timestamp = str(int(time.time()))
+    format_name = user + '-' + current + '(' + timestamp + ')' + '-'
+    with open(folder + '\\' + format_name + file.name, 'wb+') as destination:
+        for chunk in file.chunks():
+            destination.write(chunk)
+    return format_name + file.name
+
+
+# TODO update project
+def case_to_db(testcases, user, xmind_file, xlsx_file, filename):
     """
     :param testcases:
     :param user:
-    :param file:
+    :param xmind_file:
+    :param xlsx_file:
+    :param filename
     :return:
     table structure:
-    项目 模块 子模块 标题 步骤/预期 作者 文件路径
+    项目 模块 子模块 标题 步骤/预期 作者 文件路径 属性=优先级&用例类型
     """
+    user_id = UserInfo.objects.get(username=user).id
     for case in testcases:
-        xmindcase = XmindCase
+        xmindcase = XmindCase()
         xmindcase.belong_project = case['product']
         xmindcase.suite = case['suite']
         xmindcase.belong_module = case['module']
         xmindcase.steps = case['steps']
         xmindcase.name = case['name']
+        xmindcase.author = user_id
+        xmindcase.attributes = {"importance": case['importance'], "execution_type": case['execution_type']}
+        xmindcase.xmind_file.name = xmind_file
+        xmindcase.xlsx_file.name = xlsx_file
+        xmindcase.file_name = filename
+        xmindcase.save()
 
-        # xmindcase.save()
+
+def get_recent_records():
+    records = []
+    files = XmindCase.objects.values('file_name').distinct()
+    for file in files:
+        timequery = XmindCase.objects.filter(file_name=file['file_name']).values('create_time')[:1]
+        time = list(timequery)[0]['create_time'].strftime("%Y-%m-%d %H:%M:%S")
+        filequery = XmindCase.objects.filter(file_name=file['file_name']).values('xlsx_file', 'xmind_file').distinct()
+        xmind = filequery[0]['xmind_file'].split('\\')[-1]
+        xlsx = filequery[0]['xlsx_file'].split('\\')[-1]
+        records.append({"name": file['file_name'], "time": time, "xmind_file": xmind, "xlsx_file": xlsx})
+    return records
+
+
+def get_case_from_db(file):
+    test_cases = []
+    query = XmindCase.objects.filter(xmind_file=file).values('suite', 'belong_project', 'steps', 'belong_module',
+                                                             'name', 'attributes')
+    for case in query:
+        # change steps string to list
+        # change attributes to importance & expecteresults
+        suite = case['suite']
+        product = case['belong_project']
+        steps = case['steps']
+        module = case['belong_module']
+        name = case['name']
+        # attributes = json.loads(case['attributes'].replace("'", "\""))
+        attr = case['attributes'].replace('\'', '"')
+        attributes = json.loads(attr)
+        importance = attributes['importance']
+        execution_type = attributes['execution_type']
+        casedict = {"module": module, "name": name, "execution_type": execution_type, "importance": importance,
+                    "steps": json.loads(steps.replace('\'', '"')), "product": product, "suite": suite}
+        test_cases.append(casedict)
+    return test_cases
