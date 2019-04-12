@@ -2,6 +2,8 @@
 # _*_ coding:utf-8 _*_
 import json
 import os
+
+import requests
 import xmind
 import logging
 import time
@@ -206,7 +208,7 @@ def get_case_from_db(file):
         dbstep = case['steps']
         print('************' + case['name'])
         try:
-            steps = json.loads(dbstep.replace(r'"',r'\"').replace('\'', '"'))
+            steps = json.loads(dbstep.replace(r'"', r'\"').replace('\'', '"'))
             module = case['belong_module']
             name = case['name']
             attr = case['attributes'].replace('\'', '"')
@@ -220,3 +222,48 @@ def get_case_from_db(file):
             print(e)
 
     return test_cases
+
+
+def get_metadata(env, message_class):
+    """
+    :param env: env is a dict include url and ssl token
+    :param message_class
+    :return: is a list like this: [{'channel': 'channel1', 'key': 'aaaaa', 'uuid': 'bbbbb',
+    'deviceTypes': ['' , '', '']},{}]
+    """
+    env = {"url": "https://10.101.12.4:17998", "token": "063f2acb8048a8af15074f0387aeda1b"}
+    url = env['url'] + '/ciimc-fe-api/meta/subscribe-change'
+    filter = None
+    params = {"token": env['token'], "message_class": message_class}
+    with requests.get(url=url, params=params, stream=True, verify=False) as response:
+        meta = []
+        for chunk in response.iter_lines(chunk_size=1):
+            chunk = chunk.decode('utf-8')
+            if chunk:
+                if chunk == 'change':
+                    break
+                else:
+                    data = json.loads(chunk)
+                    if message_class == 'channel':
+                        meta.append(data['record']['name'])
+                    elif message_class == 'api-key':
+                        channel = data['record']['channel']
+                        key = data['record']['key']
+                        uuid = data['record']['uuid']
+                        devicetypes = data['record']['deviceTypes']
+                        meta.append({"channel": channel, "key": key, "uuid": uuid, "deviceTypes": devicetypes})
+    return meta
+
+
+def get_token(env, channel):
+    env = {"url": "http://10.101.12.4:10099"}
+    url = env['url'] + '/v2/auth'
+    channels = get_metadata(env=[], message_class='api-key')
+    for chan in channels:
+        if channel == chan['channel']:
+            key = chan['key']
+            break
+    params = {"key": key}
+    with requests.get(url=url, params=params) as response:
+        token = response.json()['token']
+    return token

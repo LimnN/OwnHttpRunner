@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}数据管理{% endblock %}
+{% load staticfiles %}
+{% load custom_tags %}
+{% block content %}
+    <form style="position: fixed; top:20%; left: 30%">
+        <div style="vertical-align: middle">
+            <label class="col-sm-3"
+                           style="font-weight: inherit; font-size: small; width: auto; vertical-align: middle; display: inline-block; ">运行环境:</label>
+            <div class="col-sm-8">
+                <select class="form-control" id="env_name" name="env_name" style="vertical-align: middle">
+                    <option value="">自带环境</option>
+                    {% for foo in env %}
+                        <option value="{{ foo.base_url }}">{{ foo.env_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}

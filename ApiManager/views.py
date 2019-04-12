@@ -813,9 +813,6 @@ def echo(request):
 @login_check
 def xmind2testcase(request):
     account = request.session["now_account"]
-    manage_info = {
-        'account': account
-    }
     records_list = get_recent_records()
     paginator = Paginator(records_list, 10)
     page = request.GET.get('page')
@@ -915,3 +912,9 @@ def delete_record(request, name):
     except EmptyPage:
         records = paginator.page(paginator.num_pages)
     return render_to_response('xmind2testcase.html', {"records": records})
+
+
+def status_send(request):
+    env = EnvInfo.objects.all().order_by('-create_time')
+    channels = ['sii', 'unicom', 'telecom']
+    return render_to_response('data_page.html', {"env": env, "channels": channels})
