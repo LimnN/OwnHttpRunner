@@ -7,10 +7,10 @@ import requests
 import xmind
 import logging
 import time
+import base64
 
 from .parser import xmind_to_testsuites
-from ApiManager.models import XmindCase, UserInfo
-# from django.utils import timezone
+# from ApiManager.models import XmindCase, UserInfo
 
 
 def get_absolute_path(path):
@@ -244,6 +244,7 @@ def get_metadata(env, message_class):
                     break
                 else:
                     data = json.loads(chunk)
+                    # no use for now
                     if message_class == 'channel':
                         meta.append(data['record']['name'])
                     elif message_class == 'api-key':
@@ -267,3 +268,54 @@ def get_token(env, channel):
     with requests.get(url=url, params=params) as response:
         token = response.json()['token']
     return token
+
+
+def get_imagedata(isarray):
+    """
+    :param isarray: is a list? True or False
+    :return:
+    """
+    image_data = None
+    if isarray:
+        with open('../../ExampleFile/a.png', 'rb') as f:
+            image_base64 = base64.b64encode(f.read())
+        with open('../../ExampleFile/b.png', 'rb') as f:
+            image2_base64 = base64.b64encode(f.read())
+        image_data = [
+            {
+                "blob": image_base64,
+                "contentType": "image/png"
+            },
+            {
+                "blob": image2_base64,
+                "contentType": "image/png"
+            }
+        ]
+    else:
+        with open('../../ExampleFile/a.png', 'rb') as f:
+            image_base64 = base64.b64encode(f.read())
+        image_data = {
+            "blob": image_base64,
+            "contentType": "image/png"
+        }
+    return image_data
+
+
+def send_status(env):
+    # TODO
+    # url = env['url'] + '/v2/device/event'
+    # token = get_token()
+
+    url = "http://10.101.12.4:10099/v2/device/event"
+    querystring = {"token": "76a0863ebdf830eb43aa19141a778e70d8c2e1ba9261118249243c02c5886d06"}
+    body = {}
+    payload = json.dumps(body)
+    headers = {
+        'Content-Type': "application/json",
+        'cache-control': "no-cache",
+        'Postman-Token': "c7c0e914-e8c3-42ab-8c88-6d492174bc72"
+    }
+
+    response = requests.request("POST", url, data=payload, headers=headers, params=querystring)
+
+    print(response.text)
