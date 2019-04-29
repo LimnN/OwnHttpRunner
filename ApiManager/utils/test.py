@@ -352,12 +352,12 @@ def railwayopen():
 
 
 if __name__ == "__main__":
-    railwayopen()
+    # railwayopen()
     # for i in range(200):
     #     smokeevent()
     #     pressureevent()
     for i in range(1):
-        smokeevent()
+        # smokeevent()
         pressureevent()
     #     # railwayopen()
     # event num=2 * range number

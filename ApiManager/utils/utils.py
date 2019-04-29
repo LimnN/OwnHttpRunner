@@ -10,7 +10,7 @@ import time
 import base64
 
 from .parser import xmind_to_testsuites
-# from ApiManager.models import XmindCase, UserInfo
+from ApiManager.models import XmindCase, UserInfo
 
 
 def get_absolute_path(path):

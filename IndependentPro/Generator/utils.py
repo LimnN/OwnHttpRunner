@@ -1,37 +1,8 @@
-import time
-
-
-def set_body(devicetype, channel):
-    deviceid = ''
-    devicetype = devicetype
-    timestamp = int(time.time())
-    # data depend on device type
-    data = set_data(devicetype)
-    body = {
-        "deviceType": devicetype,
-        "deviceID": deviceid,
-        "timestamp": timestamp,
-        "data": data
-    }
-    return body
-
-
-def set_data(devicetype):
-    data = {}
-
-    def doorsensor():
-        pass
-
-    return data
-
-
-def set_id(devicetype):
-    # including channel???
+def get_token(parameter_list):
     pass
-# TODO may be set a devicetype's template in fe
 
 
-def set_devicetype_id(devietype):
+def set_mapping(devietype):
     mapping = {
         'WellCoverSensor': [],
         'StuffGeolocating': [],
@@ -55,6 +26,8 @@ def set_devicetype_id(devietype):
         'WaterLevelSensor': [],
         'GeomagneticSensor': [],
         'RegionalPedestrianFlow': [],
-        'WaterPumpSensor': []
+        'WaterPumpSensor': [],
+        'SmokeDetectionSensor': []
     }
     return mapping[devietype]
+
