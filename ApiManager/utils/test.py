@@ -2,6 +2,7 @@ import requests
 import json
 import base64
 import time
+# from Crypto.Cipher import AES
 
 
 def get_metadata(env, message_class):
@@ -351,15 +352,26 @@ def railwayopen():
     NUM_STAY = NUM_STAY + CLOSE
 
 
+def encode():
+    uuid = 'a62d95c0c70645b19a55e71f24ac1b36'
+    area_id = '5093'
+    event_type = '公共设施'
+    # code = 'a62d95c0c70645b19a55e71f24ac1b36\u000150913\u0001公共设施'
+    code = uuid + '\1' + area_id + '\1' + event_type
+
+
 if __name__ == "__main__":
     # railwayopen()
     # for i in range(200):
     #     smokeevent()
     #     pressureevent()
-    for i in range(1):
-        # smokeevent()
+    for i in range(5):
+        smokeevent()
+        # pressureclose()
+        # time.sleep(10)
+        # pressureopen()
         pressureevent()
-    #     # railwayopen()
+        railwayopen()
     # event num=2 * range number
     # print(get_imagedata(True))
     # set_data('DoorSensor')
