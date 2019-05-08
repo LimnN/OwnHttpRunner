@@ -122,7 +122,7 @@ def gen_case_type(case_type):
 
 if __name__ == '__main__':
     # xmind_file = 'C:\\Users\\admin\Desktop\\6级用例.xmind'
-    xmind_file = '../../Example File/6级用例.xmind'
+    xmind_file = '../../ExampleFile/6级用例.xmind'
     # xmind_file = 'C:\\Users\\admin\Desktop\\5级.xmind'
     xlsx_file = xmind2xlsx(xmind_file)
     print('Convert the xmind file to a csv file successfully: %s', xlsx_file)
