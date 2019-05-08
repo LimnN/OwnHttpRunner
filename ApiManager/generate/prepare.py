@@ -67,8 +67,9 @@ def set_data(device_type, isopen=None):
     :param isopen:
     :return: a json dict
     """
-    if isopen is None:
-        return {
+    return {
+            'SmokeDetectionSensor': lambda switch: {"smoke": 200} if switch else {"smoke": 20},
+            'WaterPressureSensor': lambda switch: {"pressure": 0.3} if switch else {"pressure": 0.001},
             "VehicleGeolocating": {
                 "work_status": False,
                 "carNum": "\u6caaD67581",
@@ -96,11 +97,6 @@ def set_data(device_type, isopen=None):
                 "num_enter": random.randrange(0, 5000, 1),
                 "num_leave": random.randrange(0, 5000, 1)
             }
-        }[device_type]
-    elif isopen is not None:
-        return {
-            'SmokeDetectionSensor': lambda switch: {"smoke": 200} if switch else {"smoke": 20},
-            'WaterPressureSensor': lambda switch: {"pressure": 0.3} if switch else {"pressure": 0.001}
         }[device_type](isopen)
 
 

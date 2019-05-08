@@ -59,5 +59,5 @@ def status_generate(devices, fe_env, gateway_env):
 
 
 def generator(status_devices, event_devices, fe_env, gateway_env, isopen):
-    # status_generate(status_devices, fe_env, gateway_env)
+    status_generate(status_devices, fe_env, gateway_env)
     event_generate(event_devices, fe_env, gateway_env, isopen)
