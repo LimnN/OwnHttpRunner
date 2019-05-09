@@ -7,7 +7,7 @@ ID_MAPPING = {
     'WeChatDoorOpen': [],
     'BedMat': [],
     'WaterPressureSensor': [{"id": "D1538040277089", "channel": "sii"}],
-    'VehicleGeolocating': [{"id": "64710127608", "channel": "saige"}],
+    'VehicleGeolocating': [{"id": "13501752513", "channel": "saige"}],
     'CameraPeopleCountingSystem': [],
     'ParkingLotSystem': [{"id": "ja31010600001", "channel": "road-service"}],
     'ElevatorSensor': [],
@@ -34,18 +34,7 @@ def area_lua_generate():
     pass
 
 
-def event_generate(devices, fe_env, gateway_env, isopen):
-    # for area event generate
-    for device in devices:
-        device_type = device
-        device_id = ID_MAPPING[device][0]['id']
-        device_channel = ID_MAPPING[device][0]['channel']
-        token = get_token(gateway_env, device_channel, fe_env)
-        body = set_body(device_type, device_id, isopen)
-        send_status(gateway_env, token, body)
-
-
-def status_generate(devices, fe_env, gateway_env):
+def status_generate(devices, fe_env, gateway_env, isopen):
     # for status data generate
     # StuffGeolocating VehicleGeolocating ParkingLotSystem CameraPeopleCountingSystem
     # TODO do result count result = {}
@@ -54,10 +43,5 @@ def status_generate(devices, fe_env, gateway_env):
         device_id = ID_MAPPING[device][0]['id']
         device_channel = ID_MAPPING[device][0]['channel']
         token = get_token(gateway_env, device_channel, fe_env)
-        body = set_body(device_type, device_id)
+        body = set_body(device_type, device_id, isopen)
         send_status(gateway_env, token, body)
-
-
-def generator(status_devices, event_devices, fe_env, gateway_env, isopen):
-    status_generate(status_devices, fe_env, gateway_env)
-    event_generate(event_devices, fe_env, gateway_env, isopen)

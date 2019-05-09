@@ -361,18 +361,17 @@ def encode():
 
 
 if __name__ == "__main__":
+    smokeopen()
+    # smokeclose()
     # railwayopen()
     # for i in range(200):
     #     smokeevent()
     #     pressureevent()
-    for i in range(5):
-        smokeevent()
-        # pressureclose()
-        # time.sleep(10)
-        # pressureopen()
-        pressureevent()
-        railwayopen()
-    # event num=2 * range number
-    # print(get_imagedata(True))
-    # set_data('DoorSensor')
-    # send_status()
+    # for i in range(1):
+    #     smokeevent()
+    #     # pressureclose()
+    #     # time.sleep(10)
+    #     # pressureopen()
+    #     pressureevent()
+    #     railwayopen()
+

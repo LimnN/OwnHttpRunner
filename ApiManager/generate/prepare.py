@@ -13,7 +13,6 @@ def get_metadata(env, message_class):
     :return: is a list like this: [{'channel': 'channel1', 'key': 'aaaaa', 'uuid': 'bbbbb',
     'deviceTypes': ['' , '', '']},{}]
     """
-    # env = {"url": "https://10.101.12.4:17998", "token": "063f2acb8048a8af15074f0387aeda1b"}
     url = env['url'] + '/ciimc-fe-api/meta/subscribe-change'
     # filter = None
     params = {"token": env['token'], "message_class": message_class}
@@ -36,7 +35,6 @@ def get_metadata(env, message_class):
 
 
 def get_token(env, channel, fe_env):
-    # env = {"url": "http://10.101.12.4:10099"}
     url = env['url'] + '/v2/auth'
     channels = get_metadata(env=fe_env, message_class='api-key')
     key = None
@@ -68,31 +66,33 @@ def set_data(device_type, isopen=None):
     :return: a json dict
     """
     return {
-            'SmokeDetectionSensor': lambda switch: {"smoke": 200} if switch else {"smoke": 20},
-            'WaterPressureSensor': lambda switch: {"pressure": 0.3} if switch else {"pressure": 0.001},
-            "VehicleGeolocating": {
+            'SmokeDetectionSensor': lambda switch: {"smoke": random.randrange(101, 300, 1)}
+            if switch else {"smoke": random.randrange(0, 20, 1)},
+            'WaterPressureSensor': lambda switch: {"pressure": round(random.uniform(0.11, 1), 2)}
+            if switch else {"pressure": round(random.uniform(0, 0.09), 2)},
+            "VehicleGeolocating": lambda switch: {
                 "work_status": False,
                 "carNum": "\u6caaD67581",
                 "temperature": random.randrange(12, 40, 1),
-                "longitude": 121.4537033905,
+                "longitude": 121.4557008,
                 "course": 7,
                 "mile": 2607,
-                "latitude": 31.2310654404,
+                "latitude": 31.231937,
                 "speed": random.randrange(20, 60, 2)
             },
-            "StuffGeolocating": {
+            "StuffGeolocating": lambda switch: {
                 "latitude": 31.2310654404,
                 "work_status": True,
                 "working_hours": random.randrange(1, 10, 2),
                 "name": "\u5434\u96ef\u7ee2",
                 "longitude": 121.4537033905
             },
-            "ParkingLotSystem": {
+            "ParkingLotSystem": lambda switch: {
                 "num_park_free": random.randrange(0, 200, 1),
                 "num_guest_park_free": random.randrange(0, 200, 1),
                 "num_monthly_park_free": random.randrange(0, 200, 1)
             },
-            "CameraPeopleCountingSystem": {
+            "CameraPeopleCountingSystem": lambda switch: {
                 "num_stay": random.randrange(0, 5000, 1),
                 "num_enter": random.randrange(0, 5000, 1),
                 "num_leave": random.randrange(0, 5000, 1)
@@ -133,16 +133,13 @@ def get_imagedata(isarray):
 def send_status(env, token, body):
     # need url\channel token\body
     url = env['url'] + '/v2/device/event'
-    # token = get_token()
 
-    # url = "http://10.101.12.4:10099/v2/device/event"
     querystring = {"token": token}
     body = body
     payload = json.dumps(body)
     headers = {
         'Content-Type': "application/json",
-        'cache-control': "no-cache",
-        'Postman-Token': "c7c0e914-e8c3-42ab-8c88-6d492174bc72"
+        'cache-control': "no-cache"
     }
 
     response = requests.request("POST", url, data=payload, headers=headers, params=querystring, verify=False)
