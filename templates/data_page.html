@@ -20,37 +20,29 @@
                 <tr>
                     <td>
                         <select class="selectpicker fe" name="fe_env">
-<!--                            {% for e in env %}-->
-<!--                            <option value="{{ e }}"></option>-->
-                            <option value="default1">default1</option>
-                            <option value="default2">default2</option>
-                            <option value="default3">default3</option>
-                            <option value="default4">default4</option>
-<!--                            {% endfor %}-->
+                           {% for e in env %}
+                           <option value="{{ e }}">{{ e.name }}</option>
+                           {% endfor %}
                         </select>
                     </td>
                     <td>
                         <select class="selectpicker gateway" name="gateway_env">
-                            <option value="default">default</option>
-                            <option value="default1">default1</option>
-                            <option value="default2">default2</option>
-                            <option value="default3">default3</option>
-                            <option value="default4">default4</option>
+                            {% for e in env %}
+                            <option value="{{ e }}">{{ e.name }}</option>
+                            {% endfor %}
                         </select>
                     </td>
                     <td>
                         <select multiple class="selectpicker devices" data-live-search="true" data-actions-box="true" title="选择设备类型" name="devices">
-                            <option value="default">default</option>
-                            <option value="default1">default1</option>
-                            <option value="default2">default2</option>
-                            <option value="default3">default3</option>
-                            <option value="default4">default4</option>
+                            {% for device in devices %}
+                            <option value="{{ device }}">{{ device }}</option>
+                            {% endfor %}
                         </select>
                     </td>
                     <td>
                         <select class="selectpicker isopen" name="isopen">
-                            <option value="default">False</option>
-                            <option value="default1">True</option>
+                            <option value="False">False</option>
+                            <option value="True">True</option>
                         </select>
                     </td>
                     <td>
@@ -80,29 +72,31 @@
             var gateway = $('.selectpicker.gateway').val()
             var devices = $('.selectpicker.devices').val()
             var isopen = $('.selectpicker.isopen').val()
-            var data = {
-                "fe_env": fe,
-                "gateway": gateway,
-                "devices": devices,
-                "isopen": isopen
+            if (devices === null) {
+                alert('please select device type ')
             }
-            $.ajax(
-                {
-                    type: 'post',
-                    url: '/api/status_send/',
-                    data: JSON.stringify(data),
-                    contentType: "application/json",
-                    success: function(data) {
-                        alert('success' + data);
-                    },
-                    error: function () {
-                        alert('error')
-                    }
+            else {
+                var data = {
+                    "fe_env": fe,
+                    "gateway": gateway,
+                    "devices": devices,
+                    "isopen": isopen
                 }
-            )
-
+                $.ajax(
+                    {
+                        type: 'post',
+                        url: '/api/status_send/',
+                        data: JSON.stringify(data),
+                        contentType: "application/json",
+                        success: function(data) {
+                            alert('success' + data);
+                        },
+                        error: function () {
+                            alert('error')
+                        }
+                    }
+                )
+            }
         }
-        
-        
     </script>
 {% endblock %}

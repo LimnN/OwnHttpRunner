@@ -34,7 +34,7 @@ def area_lua_generate():
     pass
 
 
-def status_generate(devices, fe_env, gateway_env, isopen):
+def status_generate(devices, fe_env, gateway_env, isopen=False):
     # for status data generate
     # StuffGeolocating VehicleGeolocating ParkingLotSystem CameraPeopleCountingSystem
     # TODO do result count result = {}
