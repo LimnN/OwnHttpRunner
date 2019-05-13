@@ -11,7 +11,8 @@ if __name__ == '__main__':
     # 2. events open or close
     events_devices = ['SmokeDetectionSensor', 'WaterPressureSensor']
     devices = status_devices + events_devices
-    status_generate(devices, env_fe, env_gateway, False)
+    # devices = ['VehicleGeolocating', 'StuffGeolocating']
+    status_generate(devices, env_fe, env_gateway, True)
 
     # select event number to create? maybe
     # TODO
@@ -19,3 +20,4 @@ if __name__ == '__main__':
     # select date & time maybe
     # select town & district maybe
     # select how many devices? eg. 1 WellCoverSensor 3 DoorSensors
+    # set device type data model

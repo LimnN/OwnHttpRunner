@@ -917,4 +917,8 @@ def delete_record(request, name):
 def status_send(request):
     env = EnvInfo.objects.all().order_by('-create_time')
     channels = ['sii', 'unicom', 'telecom']
-    return render_to_response('data_page.html', {"env": env, "channels": channels})
+    if request.is_ajax():
+        data = json.loads(request.body.decode('utf-8'))
+        return HttpResponse(data)
+    else:
+        return render_to_response('data_page.html', {"env": env, "channels": channels})

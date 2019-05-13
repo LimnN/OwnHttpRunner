@@ -1,21 +1,155 @@
 {% extends "base.html" %}
-{% block title %}数据管理{% endblock %}
+{% block title %}data generate{% endblock %}
 {% load staticfiles %}
 {% load custom_tags %}
 {% block content %}
-    <form style="position: fixed; top:20%; left: 30%">
-        <div style="vertical-align: middle">
-            <label class="col-sm-3"
-                           style="font-weight: inherit; font-size: small; width: auto; vertical-align: middle; display: inline-block; ">运行环境:</label>
-            <div class="col-sm-8">
-                <select class="form-control" id="env_name" name="env_name" style="vertical-align: middle">
-                    <option value="">自带环境</option>
-                    {% for foo in env %}
-                        <option value="{{ foo.base_url }}">{{ foo.env_name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-    </form>
 
+    <div class="admin-biaogelist">
+        <form class="am-form am-g" id='suite_list' name="suite_list">
+            <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
+                <thead>
+                    <tr class="am-success">
+                        <th class="table-title">选择fe-api环境</th>
+                        <th class="table-type">选择gateway环境</th>
+                        <th class="table-type">选择设备类型</th>
+                        <th class="table-type">True or False</th>
+                        <th width="163px" class="table-title">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <select class="selectpicker fe" name="fe_env">
+                            <option value="default">default</option>
+                            <option value="default1">default1</option>
+                            <option value="default2">default2</option>
+                            <option value="default3">default3</option>
+                            <option value="default4">default4</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="selectpicker gateway" name="gateway_env">
+                            <option value="default">default</option>
+                            <option value="default1">default1</option>
+                            <option value="default2">default2</option>
+                            <option value="default3">default3</option>
+                            <option value="default4">default4</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select multiple class="selectpicker devices" data-live-search="true" data-actions-box="true" title="选择设备类型" name="devices">
+                            <option value="default">default</option>
+                            <option value="default1">default1</option>
+                            <option value="default2">default2</option>
+                            <option value="default3">default3</option>
+                            <option value="default4">default4</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="selectpicker isopen" name="isopen">
+                            <option value="default">False</option>
+                            <option value="default1">True</option>
+                        </select>
+                    </td>
+                    <td>
+                        <div class="am-btn-toolbar">
+                            <div class="am-btn-group am-btn-group-xs">
+                                <button type="button"
+                                        class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
+                                        data-am-popover="{content: '执行', trigger: 'hover focus'}"
+                                        onclick="start_gen()">
+                                    <span class="am-icon-bug"></span>
+                                </button>
+
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+        </form>
+    </div>
+    <script type="text/javascript">
+        
+
+        function start_gen(fe, gateway, devices, isopen) {
+            var fe = $('.selectpicker.fe').val()
+            var gateway = $('.selectpicker.gateway').val()
+            var devices = $('.selectpicker.devices').val()
+            var isopen = $('.selectpicker.isopen').val()
+            var data = {
+                "fe_env": fe,
+                "gateway": gateway,
+                "devices": devices,
+                "isopen": isopen
+            }
+            $.ajax(
+                {
+                    type: 'post',
+                    url: '/api/status_send/',
+                    data: JSON.stringify(data),
+                    contentType: "application/json",
+                    success: function(data) {
+                        alert('success');
+                    },
+                    error: function () {
+                        alert('error')
+                    }
+                }
+            )
+
+        }
+        
+        function run_test(mode, url, type) {
+            if (mode === 'batch') {
+                if ($("input:checked").size() === 0) {
+                    myAlert("请至少选择一个套件运行！");
+                    return;
+                }
+            }
+            $('#select_env').modal({
+                relatedTarget: this,
+                onConfirm: function () {
+                    var data = {
+                        "id": $("#suite_list").serializeJSON(),
+                        "env_name": $('#env_name').val(),
+                        "type": type,
+                        'report_name': $('#report_name').val()
+                    };
+                    if (mode !== 'batch') {
+                        data["id"] = mode;
+                    }
+                    if ($('#mode').val() === 'true') {
+                        if (mode === 'batch') {
+                            var json2map = JSON.stringify(data['id']);
+                            var obj = JSON.parse(json2map);
+                            obj['env_name'] = data['env_name'];
+                            obj['type'] = data['type'];
+                            post('/api/run_batch_test/', obj);
+                        } else {
+                            post('/api/run_test/', data);
+                        }
+                    } else {
+                        $.ajax({
+                            type: 'post',
+                            url: url,
+                            data: JSON.stringify(data),
+                            contentType: "application/json",
+                            success: function (data) {
+                                myAlert(data);
+                            },
+                            error: function () {
+                                myAlert('Sorry，服务器可能开小差啦, 请重试!');
+                            }
+                        });
+                    }
+                },
+                onCancel: function () {
+                }
+            });
+        }
+
+        
+    </script>
 {% endblock %}
