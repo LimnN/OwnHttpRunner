@@ -20,11 +20,13 @@
                 <tr>
                     <td>
                         <select class="selectpicker fe" name="fe_env">
-                            <option value="default">default</option>
+<!--                            {% for e in env %}-->
+<!--                            <option value="{{ e }}"></option>-->
                             <option value="default1">default1</option>
                             <option value="default2">default2</option>
                             <option value="default3">default3</option>
                             <option value="default4">default4</option>
+<!--                            {% endfor %}-->
                         </select>
                     </td>
                     <td>
@@ -91,7 +93,7 @@
                     data: JSON.stringify(data),
                     contentType: "application/json",
                     success: function(data) {
-                        alert('success');
+                        alert('success' + data);
                     },
                     error: function () {
                         alert('error')
@@ -101,55 +103,6 @@
 
         }
         
-        function run_test(mode, url, type) {
-            if (mode === 'batch') {
-                if ($("input:checked").size() === 0) {
-                    myAlert("请至少选择一个套件运行！");
-                    return;
-                }
-            }
-            $('#select_env').modal({
-                relatedTarget: this,
-                onConfirm: function () {
-                    var data = {
-                        "id": $("#suite_list").serializeJSON(),
-                        "env_name": $('#env_name').val(),
-                        "type": type,
-                        'report_name': $('#report_name').val()
-                    };
-                    if (mode !== 'batch') {
-                        data["id"] = mode;
-                    }
-                    if ($('#mode').val() === 'true') {
-                        if (mode === 'batch') {
-                            var json2map = JSON.stringify(data['id']);
-                            var obj = JSON.parse(json2map);
-                            obj['env_name'] = data['env_name'];
-                            obj['type'] = data['type'];
-                            post('/api/run_batch_test/', obj);
-                        } else {
-                            post('/api/run_test/', data);
-                        }
-                    } else {
-                        $.ajax({
-                            type: 'post',
-                            url: url,
-                            data: JSON.stringify(data),
-                            contentType: "application/json",
-                            success: function (data) {
-                                myAlert(data);
-                            },
-                            error: function () {
-                                myAlert('Sorry，服务器可能开小差啦, 请重试!');
-                            }
-                        });
-                    }
-                },
-                onCancel: function () {
-                }
-            });
-        }
-
         
     </script>
 {% endblock %}

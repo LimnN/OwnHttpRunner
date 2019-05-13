@@ -11,6 +11,7 @@ from django.shortcuts import render_to_response, render
 from django.utils.encoding import escape_uri_path
 from django.utils.safestring import mark_safe
 from djcelery.models import PeriodicTask
+from django.forms.models import model_to_dict
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from dwebsocket import accept_websocket
 
@@ -916,6 +917,10 @@ def delete_record(request, name):
 
 def status_send(request):
     env = EnvInfo.objects.all().order_by('-create_time')
+    # a = model_to_dict(env)
+    for e in env:
+        name = e['']
+    print(env)
     channels = ['sii', 'unicom', 'telecom']
     if request.is_ajax():
         data = json.loads(request.body.decode('utf-8'))
