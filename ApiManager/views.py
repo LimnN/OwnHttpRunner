@@ -914,8 +914,9 @@ def delete_record(request, name):
     return render_to_response('xmind2testcase.html', {"records": records})
 
 
+@login_check
 def status_send(request):
-    query = EnvInfo.objects.all().order_by('create_time').values('env_name', 'base_url', 'simple_desc')
+    query = EnvInfo.objects.all().order_by('-create_time').values('env_name', 'base_url', 'simple_desc')
     # a = model_to_dict(env)
     env = []
     for e in query:
@@ -923,14 +924,11 @@ def status_send(request):
         url = e['base_url']
         des = e['simple_desc']
         env.append({"name": name, "url": url, "des": des})
-    # print(env)
     device_type = []
     for device in ID_MAPPING:
         device_type.append(device)
     if request.is_ajax():
         data = json.loads(request.body.decode('utf-8'))
-        # print("*******")
-        # print(data)
         devices = data['devices']
         fe_env = {"url": json.loads(data['fe_env'].replace(r'"', r'\"').replace('\'', '"'))['url'],
                   "token": json.loads(data['fe_env'].replace(r'"', r'\"').replace('\'', '"'))['des']}
