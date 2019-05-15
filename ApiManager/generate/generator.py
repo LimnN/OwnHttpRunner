@@ -43,11 +43,18 @@ def area_lua_generate():
 def status_generate(devices, fe_env, gateway_env, isopen=False):
     # for status data generate
     # StuffGeolocating VehicleGeolocating ParkingLotSystem CameraPeopleCountingSystem
-    # TODO do result count result = {}
+    success = 0
+    fail = 0
     for device in devices:
         device_type = device
         device_id = ID_MAPPING[device][0]['id']
         device_channel = ID_MAPPING[device][0]['channel']
         token = get_token(gateway_env, device_channel, fe_env)
         body = set_body(device_type, device_id, isopen)
-        send_status(gateway_env, token, body)
+        result = send_status(gateway_env, token, body)
+        if result['result'] == 'success':
+            success += 1
+        else:
+            fail += 1
+    result = {"success": success, "fail": fail}
+    return result
