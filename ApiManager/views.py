@@ -934,7 +934,8 @@ def status_send(request):
                   "token": json.loads(data['fe_env'].replace(r'"', r'\"').replace('\'', '"'))['des']}
         gateway_env = {"url": json.loads(data['gateway'].replace(r'"', r'\"').replace('\'', '"'))['url']}
         isopen = data['isopen'] == 'True'
-        status_generate(devices, fe_env, gateway_env, isopen)
-        return HttpResponse(data)
+        result = status_generate(devices, fe_env, gateway_env, isopen)
+        print(result)
+        return HttpResponse(str(result))
     else:
         return render_to_response('data_page.html', {"env": env, "devices": device_type})

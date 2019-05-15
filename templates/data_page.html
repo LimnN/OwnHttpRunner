@@ -78,8 +78,36 @@
         </div>
     </div>
 </div>
+
+<div class="am-modal am-modal-alert" tabindex="-1" id="process-alert">
+    <div class="am-modal-dialog">
+        <div class="am-modal-hd">HttpRunnerManager</div>
+        <div class="am-modal-bd">
+            <div class="progress">
+                <div class="progress-bar progress-bar-warning progress-bar-striped active" id="process-alert_print" style="width: 100%">
+                    处理中...
+                </div>
+            </div>
+        </div>
+        <div class="am-modal-footer">
+            <span class="am-modal-btn" onclick="processReset()">确定</span>
+        </div>
+    </div>
+</div>
 <script type="text/javascript">
 
+    function processAlert() {
+        $('#process-alert').modal(
+            {
+                relatedTarget: this
+            }
+        );
+    }
+
+    function processReset() {
+        $('#process-alert_print').text("处理中")
+        $('#process-alert_print').get(0).className='progress-bar progress-bar-warning progress-bar-striped active'
+    }
 
     function start_gen() {
         var fe = $('.selectpicker.fe').val()
@@ -90,22 +118,23 @@
             myAlert('please select device type ')
         }
         else {
-            $('#exampleModal').modal()
-
+            processAlert()
             var data = {
                 "fe_env": fe,
                 "gateway": gateway,
                 "devices": devices,
                 "isopen": isopen
             }
+            
             $.ajax(
                 {
                     type: 'post',
                     url: '/api/status_send/',
                     data: JSON.stringify(data),
                     contentType: "application/json",
-                    success: function (data) {
-                        // alert('success' + data);
+                    success: function (result) {
+                        $('#process-alert_print').get(0).className='progress-bar progress-bar-success'
+                        $('#process-alert_print').text(result)
                     },
                     error: function () {
                         myAlert('error')

@@ -143,4 +143,5 @@ def send_status(env, token, body):
 
     response = requests.request("POST", url, data=payload, headers=headers, params=querystring, verify=False)
     print(payload)
-    print(response.text)
+    print(response.json())
+    return response.json()
