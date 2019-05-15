@@ -11,7 +11,6 @@ from django.shortcuts import render_to_response, render
 from django.utils.encoding import escape_uri_path
 from django.utils.safestring import mark_safe
 from djcelery.models import PeriodicTask
-from django.forms.models import model_to_dict
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from dwebsocket import accept_websocket
 
@@ -31,7 +30,7 @@ from ApiManager.utils.task_opt import delete_task, change_task_status
 from ApiManager.utils.testcase import get_time_stamp
 from httprunner import HttpRunner
 from ApiManager.utils.createdir import mk_upload_dir
-
+from ApiManager.generate.generator import ID_MAPPING, status_generate
 from ApiManager.utils.utils import get_xmind_testsuites, get_xmind_testcase_list, case_to_db, get_recent_records, \
     get_case_from_db, handle_upload
 from ApiManager.utils.excelfile import xmind2xlsx
@@ -915,15 +914,27 @@ def delete_record(request, name):
     return render_to_response('xmind2testcase.html', {"records": records})
 
 
+@login_check
 def status_send(request):
-    env = EnvInfo.objects.all().order_by('-create_time')
+    query = EnvInfo.objects.all().order_by('-create_time').values('env_name', 'base_url', 'simple_desc')
     # a = model_to_dict(env)
-    for e in env:
-        name = e[';']
-    print(env)
-    channels = ['sii', 'unicom', 'telecom']
+    env = []
+    for e in query:
+        name = e['env_name']
+        url = e['base_url']
+        des = e['simple_desc']
+        env.append({"name": name, "url": url, "des": des})
+    device_type = []
+    for device in ID_MAPPING:
+        device_type.append(device)
     if request.is_ajax():
         data = json.loads(request.body.decode('utf-8'))
+        devices = data['devices']
+        fe_env = {"url": json.loads(data['fe_env'].replace(r'"', r'\"').replace('\'', '"'))['url'],
+                  "token": json.loads(data['fe_env'].replace(r'"', r'\"').replace('\'', '"'))['des']}
+        gateway_env = {"url": json.loads(data['gateway'].replace(r'"', r'\"').replace('\'', '"'))['url']}
+        isopen = data['isopen'] == 'True'
+        status_generate(devices, fe_env, gateway_env, isopen)
         return HttpResponse(data)
     else:
-        return render_to_response('data_page.html', {"env": env, "channels": channels})
+        return render_to_response('data_page.html', {"env": env, "devices": device_type})
