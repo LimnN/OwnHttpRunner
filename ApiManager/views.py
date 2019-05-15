@@ -29,10 +29,9 @@ from ApiManager.utils.runner import run_by_batch, run_test_by_type
 from ApiManager.utils.task_opt import delete_task, change_task_status
 from ApiManager.utils.testcase import get_time_stamp
 from httprunner import HttpRunner
-from ApiManager.utils.createdir import mk_upload_dir
-from ApiManager.generate.generator import ID_MAPPING, status_generate
+from ApiManager.generate.generator import status_generate
 from ApiManager.utils.utils import get_xmind_testsuites, get_xmind_testcase_list, case_to_db, get_recent_records, \
-    get_case_from_db, handle_upload
+    get_case_from_db, handle_upload, mk_upload_dir, read_json, write_json
 from ApiManager.utils.excelfile import xmind2xlsx
 from ApiManager.models import XmindCase
 
@@ -887,7 +886,6 @@ def record_view(request, name):
     upload_folder = mk_upload_dir()
     file = upload_folder + '\\' + name
     test_cases = get_case_from_db(file)
-    suite_count = 0
     suites = []
     for case in test_cases:
         suites.append(case['suite'])
@@ -916,6 +914,7 @@ def delete_record(request, name):
 
 @login_check
 def status_send(request):
+    user = request.session["now_account"]
     query = EnvInfo.objects.all().order_by('-create_time').values('env_name', 'base_url', 'simple_desc')
     # a = model_to_dict(env)
     env = []
@@ -925,6 +924,7 @@ def status_send(request):
         des = e['simple_desc']
         env.append({"name": name, "url": url, "des": des})
     device_type = []
+    ID_MAPPING = json.loads(read_json(user))
     for device in ID_MAPPING:
         device_type.append(device)
     if request.is_ajax():
@@ -934,8 +934,29 @@ def status_send(request):
                   "token": json.loads(data['fe_env'].replace(r'"', r'\"').replace('\'', '"'))['des']}
         gateway_env = {"url": json.loads(data['gateway'].replace(r'"', r'\"').replace('\'', '"'))['url']}
         isopen = data['isopen'] == 'True'
-        result = status_generate(devices, fe_env, gateway_env, isopen)
+        result = status_generate(devices, fe_env, gateway_env, ID_MAPPING, isopen)
         print(result)
         return HttpResponse(str(result))
     else:
         return render_to_response('data_page.html', {"env": env, "devices": device_type})
+
+
+@login_check
+def set_data(request):
+    user = request.session["now_account"]
+    if request.is_ajax():
+        data = json.loads(request.body.decode('utf-8'))
+        print(data)
+        device_type = data['deviceType']
+        id_channel = json.loads(data['id'])
+        open_data = json.loads(data['open'])
+        close_data = json.loads(data['close'])
+
+        model = json.loads(read_json(user))
+        print(model)
+        model['ID_MAPPING'][device_type].insert(0, id_channel)
+        model['dataModel'][device_type]['open'] = open_data
+        model['dataModel'][device_type]['close'] = close_data
+        print(model)
+        write_json(user, model)
+        return HttpResponse('success')

@@ -5,7 +5,7 @@
 {% block content %}
 
 <div class="admin-biaogelist">
-    <form class="am-form am-g" id='suite_list' name="suite_list">
+    <form class="am-form am-g" id='status_gen' name="status_gen">
         <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
             <thead>
                 <tr class="am-success">
@@ -62,29 +62,73 @@
         </table>
 
     </form>
+    <form class="am-form am-g" id='set_device_data' name="set_device_data">
+        <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
+            <thead>
+                <tr class="am-success">
+                    <th class="table-title">选择设备类型</th>
+                    <th class="table-type">设置deviceInfo</th>
+                    <th class="table-type">设置事件open data</th>
+                    <th class="table-type">设置事件close data</th>
+                    <th width="163px" class="table-title">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <select class="selectpicker device_set" name="device_set">
+                            {% for device in devices %}
+                            <option value="{{ device }}">{{ device }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <!--输出deviceID-->
+                        <div class="col-sm-9">
+                            <input name="set_id" type="text" class="form-control" id="set_id" placeholder="set deviceID"
+                                value="">
+                        </div>
+                    </td>
+                    <td>
+                        <!--输入open data-->
+                        <div class="col-sm-9">
+                            <input name="set_open" type="text" class="form-control" id="set_open"
+                                placeholder="set event open data" value="">
+                        </div>
+                    </td>
+                    <td>
+                        <!--输入close data-->
+                        <div class="col-sm-9">
+                            <input name="set_close" type="text" class="form-control" id="set_close"
+                                placeholder="set event close data" value="">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="am-btn-toolbar">
+                            <div class="am-btn-group am-btn-group-xs">
+                                <button type="button" class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
+                                    data-am-popover="{content: '设置', trigger: 'hover focus'}" onclick="set_data()">
+                                    <span class="am-icon-bug"></span>
+                                </button>
+
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </form>
 </div>
 
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-sm" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="progress">
-                    <div class="progress-bar progress-bar-success progress-bar-striped active" style="width: 100%">
-                        processing
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="am-modal am-modal-alert" tabindex="-1" id="process-alert">
     <div class="am-modal-dialog">
         <div class="am-modal-hd">HttpRunnerManager</div>
         <div class="am-modal-bd">
             <div class="progress">
-                <div class="progress-bar progress-bar-warning progress-bar-striped active" id="process-alert_print" style="width: 100%">
+                <div class="progress-bar progress-bar-warning progress-bar-striped active" id="process-alert_print"
+                    style="width: 100%">
                     处理中...
                 </div>
             </div>
@@ -106,7 +150,7 @@
 
     function processReset() {
         $('#process-alert_print').text("处理中")
-        $('#process-alert_print').get(0).className='progress-bar progress-bar-warning progress-bar-striped active'
+        $('#process-alert_print').get(0).className = 'progress-bar progress-bar-warning progress-bar-striped active'
     }
 
     function start_gen() {
@@ -125,7 +169,7 @@
                 "devices": devices,
                 "isopen": isopen
             }
-            
+
             $.ajax(
                 {
                     type: 'post',
@@ -133,10 +177,51 @@
                     data: JSON.stringify(data),
                     contentType: "application/json",
                     success: function (result) {
-                        $('#process-alert_print').get(0).className='progress-bar progress-bar-success'
+                        $('#process-alert_print').get(0).className = 'progress-bar progress-bar-success'
                         $('#process-alert_print').text(result)
                     },
                     error: function () {
+                        $('.am-modal-btn').click()
+                        myAlert('error')
+                    }
+                }
+            )
+        }
+    }
+
+    function set_data() {
+        var device = $('.selectpicker.device_set').val()
+        var id = $("input[id='set_id']").val() //including channel
+        var open = $("input[id='set_open']").val()
+        var close = $("input[id='set_close']").val()
+        if (device === null) {
+            myAlert('set device type')
+        }
+        else if (id === "") {
+            myAlert('set device id')
+        }
+        else if (open === "" && close === "") {
+            myAlert('set data')
+        }
+        else {
+            var data = {
+                "deviceType": device,
+                "id": id,
+                "open": open,
+                "close": close
+            }
+            $.ajax(
+                {
+                    type: 'post',
+                    url: '/api/set_data/',
+                    data: JSON.stringify(data),
+                    contentType: "application/json",
+                    success: function (result) {
+                        $('#process-alert_print').get(0).className = 'progress-bar progress-bar-success'
+                        $('#process-alert_print').text(result)
+                    },
+                    error: function () {
+                        $('.am-modal-btn').click()
                         myAlert('error')
                     }
                 }

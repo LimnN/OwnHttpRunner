@@ -14,3 +14,4 @@ ApiManager/templatetags/*.pyc
 *.log
 venv/
 ApiManager/uploads/
+settings.json

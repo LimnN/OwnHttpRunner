@@ -1,4 +1,5 @@
-from ApiManager.generate.generator import status_generate
+# from ApiManager.generate.generator import status_generate
+from ApiManager.generate.prepare import get_metadata
 
 if __name__ == '__main__':
     # select fe api env
@@ -12,10 +13,10 @@ if __name__ == '__main__':
     events_devices = ['SmokeDetectionSensor', 'WaterPressureSensor']
     devices = status_devices + events_devices
     # devices = ['VehicleGeolocating', 'StuffGeolocating']
-    status_generate(devices, env_fe, env_gateway, True)
-
+    # status_generate(devices, env_fe, env_gateway, True)
+    print(get_metadata(env_fe, 'api-key'))
     # select event number to create? maybe
-    # TODO
+    # TODO maybe set num\ town\ time ?
     # two part : need status? need events?
     # select date & time maybe
     # select town & district maybe

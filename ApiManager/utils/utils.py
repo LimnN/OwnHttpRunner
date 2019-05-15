@@ -2,12 +2,12 @@
 # _*_ coding:utf-8 _*_
 import json
 import os
+import shutil
+from os.path import exists
 
-import requests
 import xmind
 import logging
 import time
-import base64
 
 from .parser import xmind_to_testsuites
 from ApiManager.models import XmindCase, UserInfo
@@ -222,3 +222,41 @@ def get_case_from_db(file):
             print(e)
 
     return test_cases
+
+
+def mk_upload_dir():
+    here = os.path.abspath(os.path.dirname(__file__))
+    upload_folder = os.path.join(here, '..\\uploads')
+    if not exists(upload_folder):
+        os.mkdir(upload_folder)
+    return upload_folder
+
+
+def mk_model_dir():
+    here = os.path.abspath(os.path.dirname(__file__))
+    model_folder = os.path.join(here, '..\\models')
+    if not exists(model_folder):
+        os.mkdir(model_folder)
+    return model_folder
+
+
+def read_json(user):
+    folder = mk_model_dir()
+    init = folder + '\\' + 'init.json'
+    file = folder + '\\' + user + '.json'
+    if not os.path.isfile(file) or not os.path.getsize(file):
+        shutil.copyfile(init, file)
+        with open(file) as data:
+            model = data.read()
+    else:
+        with open(file) as data:
+            model = data.read()
+    return model
+
+
+def write_json(user, data):
+    # TODO 格式化写数据
+    folder = mk_model_dir()
+    file = folder + '\\' + user + '.json'
+    with open(file, 'w') as f:
+        f.write(str(data).replace(r'"', r'\"').replace('\'', '"'))

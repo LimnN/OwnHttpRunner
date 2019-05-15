@@ -1,7 +1,11 @@
+import shutil
+from os.path import exists
+
 import requests
 import json
 import base64
 import time
+import os
 # from Crypto.Cipher import AES
 
 
@@ -352,16 +356,16 @@ def railwayopen():
     NUM_STAY = NUM_STAY + CLOSE
 
 
-def encode():
-    uuid = 'a62d95c0c70645b19a55e71f24ac1b36'
-    area_id = '5093'
-    event_type = '公共设施'
-    # code = 'a62d95c0c70645b19a55e71f24ac1b36\u000150913\u0001公共设施'
-    code = uuid + '\1' + area_id + '\1' + event_type
+def mk_model_dir():
+    here = os.path.abspath(os.path.dirname(__file__))
+    model_folder = os.path.join(here, '..\\models')
+    if not exists(model_folder):
+        os.mkdir(model_folder)
+    return model_folder
 
 
 if __name__ == "__main__":
-    smokeopen()
+    # smokeopen()
     # smokeclose()
     # railwayopen()
     # for i in range(200):
@@ -374,4 +378,14 @@ if __name__ == "__main__":
     #     # pressureopen()
     #     pressureevent()
     #     railwayopen()
-
+    folder = mk_model_dir()
+    init = folder + '\\' + 'init.json'
+    user = 'admin'
+    file = folder + '\\' + user + '.json'
+    if os.path.isfile(file):
+        with open(file) as data:
+            model = data.read()
+    else:
+        shutil.copyfile(init, file)
+        with open(file) as data:
+            model = data.read()
