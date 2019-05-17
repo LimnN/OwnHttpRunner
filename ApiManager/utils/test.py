@@ -6,6 +6,8 @@ import json
 import base64
 import time
 import os
+
+
 # from Crypto.Cipher import AES
 
 
@@ -156,7 +158,7 @@ def smokeopen():
         'content-length': "153",
         'Connection': "keep-alive",
         'cache-control': "no-cache"
-        }
+    }
 
     response = requests.request("POST", url, data=payload, headers=headers, params=querystring)
 
@@ -194,7 +196,7 @@ def smokeclose():
         'content-length': "153",
         'Connection': "keep-alive",
         'cache-control': "no-cache"
-        }
+    }
 
     response = requests.request("POST", url, data=payload, headers=headers, params=querystring)
 
@@ -232,7 +234,7 @@ def pressureopen():
         'content-length': "153",
         'Connection': "keep-alive",
         'cache-control': "no-cache"
-        }
+    }
 
     response = requests.request("POST", url, data=payload, headers=headers, params=querystring)
 
@@ -270,7 +272,7 @@ def pressureclose():
         'content-length': "153",
         'Connection': "keep-alive",
         'cache-control': "no-cache"
-        }
+    }
 
     response = requests.request("POST", url, data=payload, headers=headers, params=querystring)
 
@@ -364,7 +366,124 @@ def mk_model_dir():
     return model_folder
 
 
+def query():
+    url = "http://10.101.12.4:17999/united-ciimc-api/v1/generic-query"
+
+    # querystring = {"table": "area-event", "index_type": "active", "limit": "5", "offset": "0",
+    #                "filter": "time%3D1500000000~1600000000%26town.id%3Deq.2%26area_district.id%3Deq.39%26"
+    #                          "simple.messageType%3D%E7%8E%AF%E5%8D%AB%E5%B8%82%E5%AE%B9%26eventSourceType%3Deq.2%26"
+    #                          "eventDiscoverType%3Deq.%E4%B8%BB%E5%8A%A8%E5%8F%91%E7%8E%B0%26"
+    #                          "address%3Deq.%E5%AE%89%E4%B8%9A%E8%B7%AF21%E5%8F%B7%E5%90%91%E5%8C%9715%E7%B1%B3%26"
+    #                          "args.eventLevel%3D0",
+    #                "transform": "messages%5B%5D.%7Buuid%3Adata.uuid%2Ctown%3Adata.town.areaName%2CeventSourceType%3A"
+    #                             "data.eventSourceType%2CeventDiscoverType%3Adata.eventDiscoverType%2CeventType%3A"
+    #                             "messageType%2CeventLevel%3Aargs.eventLevel%2Caddress%3Adata.address%2Ctimestamp%3A"
+    #                             "data.openTS%2CisOpen%3Adata.isOpen%7D",
+    #                "need_transform": "1"}
+    table = 'area-event'
+    index = 'active'
+    limit = 5
+    offset = 0
+    filters = 'time=1557974120~1557974122' \
+              '&area_district.id=eq.39'
+    # filters = 'time=1500000000~1600000000' \
+    #           '&town.id=eq.2' \
+    #           '&area_district.id=eq.39' \
+    #           '&simple.messageType=环卫市容' \
+    #           '&eventSourceType=eq.2' \
+    #           '&eventDiscoverType=eq.主动发现' \
+    #           '&address=eq.安业路21号向北15米' \
+    #           '&args.eventLevel=0'
+    transform = 'messages[].{' \
+                'uuid:data.uuid,town:data.town.areaName,eventSourceType:data.eventSourceType,' \
+                'eventDiscoverType:data.eventDiscoverType,' \
+                'eventType:messageType,' \
+                'eventLevel:args.eventLevel,' \
+                'address:data.address,' \
+                'timestamp:data.openTS,' \
+                'isOpen:data.isOpen}'
+    need_transform = 1
+    params = {
+        "table": table,
+        "index": index,
+        "limit": limit,
+        "offset": offset,
+        "filter": filters,
+        "transform": transform,
+        "need_transform": need_transform
+    }
+
+    payload = ""
+    headers = {
+        'User-Agent': "PostmanRuntime/7.11.0",
+        'Accept': "*/*",
+        'Cache-Control': "no-cache",
+        'Postman-Token': "f38dce01-941e-49eb-8f0f-8685e821c5f0,c0e4465c-ad97-4bb8-bcc4-ce146fda5bde",
+        'Host': "10.101.12.4:17999",
+        'accept-encoding': "gzip, deflate",
+        'Connection': "keep-alive",
+        'cache-control': "no-cache"
+    }
+
+    response = requests.request("GET", url, data=payload, headers=headers, params=params)
+
+    print(response.text)
+
+
+def query_map():
+    url = "http://10.101.12.4:17999/united-ciimc-api/v1/generic-query"
+
+    # querystring = {"table": "area-event", "index_type": "active", "limit": "0",
+    #                "filter": "time%3D1500000000~1600000000%26"
+    #                          "town.id%3Deq.2%26"
+    #                          "area_district.id%3Deq.39%26"
+    #                          "simple.messageType%3D%E7%8E%AF%E5%8D%AB%E5%B8%82%E5%AE%B9%26"
+    #                          "eventSourceType%3Deq.2%26"
+    #                          "eventDiscoverType%3Deq.%E4%B8%BB%E5%8A%A8%E5%8F%91%E7%8E%B0%26"
+    #                          "address%3Deq.%E5%AE%89%E4%B8%9A%E8%B7%AF21%E5%8F%B7%E5%90%91%E5%8C%9715%E7%B1%B3%26"
+    #                          "args.eventLevel%3D0",
+    #                "group_by": "geo.p8"}
+    table = 'area-event'
+    index = 'active'
+    limit = 0
+    filters = 'time=1500000000~1600000000'
+              # '&area_district.id=eq.39'
+    # filters = 'time=1500000000~1600000000' \
+    #           '&town.id=eq.2' \
+    #           '&area_district.id=eq.39' \
+    #           '&simple.messageType=环卫市容' \
+    #           '&eventSourceType=eq.2' \
+    #           '&eventDiscoverType=eq.主动发现' \
+    #           '&address=eq.安业路21号向北15米' \
+    #           '&args.eventLevel=0'
+    group_by = 'geo.p8'
+    params = {
+        "table": table,
+        "index": index,
+        "limit": limit,
+        "filter": filters,
+        "group_by": group_by
+    }
+    payload = ""
+    headers = {
+        'User-Agent': "PostmanRuntime/7.11.0",
+        'Accept': "*/*",
+        'Cache-Control': "no-cache",
+        'Postman-Token': "9b5282c5-0d28-490a-824b-971c2be1690d,fb89745e-5040-4469-97b7-3d82818385bd",
+        'Host': "10.101.12.4:17999",
+        'accept-encoding': "gzip, deflate",
+        'Connection': "keep-alive",
+        'cache-control': "no-cache"
+    }
+
+    response = requests.request("GET", url, data=payload, headers=headers, params=params)
+
+    print(response.text)
+
+
 if __name__ == "__main__":
+    query()
+    # query_map()
     # smokeopen()
     # smokeclose()
     # railwayopen()
@@ -378,14 +497,3 @@ if __name__ == "__main__":
     #     # pressureopen()
     #     pressureevent()
     #     railwayopen()
-    folder = mk_model_dir()
-    init = folder + '\\' + 'init.json'
-    user = 'admin'
-    file = folder + '\\' + user + '.json'
-    if os.path.isfile(file):
-        with open(file) as data:
-            model = data.read()
-    else:
-        shutil.copyfile(init, file)
-        with open(file) as data:
-            model = data.read()

@@ -42,8 +42,8 @@
                     </td>
                     <td>
                         <select class="selectpicker isopen" name="isopen">
-                            <option value="False">False</option>
-                            <option value="True">True</option>
+                            <option value="close">CLOSE</option>
+                            <option value="open">OPEN</option>
                         </select>
                     </td>
                     <td>
@@ -76,7 +76,7 @@
             <tbody>
                 <tr>
                     <td>
-                        <select class="selectpicker device_set" name="device_set">
+                        <select class="selectpicker device_set" data-live-search="true" name="device_set">
                             {% for device in devices %}
                             <option value="{{ device }}">{{ device }}</option>
                             {% endfor %}

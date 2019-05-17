@@ -914,6 +914,7 @@ def delete_record(request, name):
 
 @login_check
 def status_send(request):
+    # TODO 添加异常处理
     user = request.session["now_account"]
     query = EnvInfo.objects.all().order_by('-create_time').values('env_name', 'base_url', 'simple_desc')
     # a = model_to_dict(env)
@@ -924,8 +925,9 @@ def status_send(request):
         des = e['simple_desc']
         env.append({"name": name, "url": url, "des": des})
     device_type = []
-    ID_MAPPING = json.loads(read_json(user))
-    for device in ID_MAPPING:
+    model = json.loads(read_json(user))
+    id_mapping = model['ID_MAPPING']
+    for device in id_mapping:
         device_type.append(device)
     if request.is_ajax():
         data = json.loads(request.body.decode('utf-8'))
@@ -933,8 +935,8 @@ def status_send(request):
         fe_env = {"url": json.loads(data['fe_env'].replace(r'"', r'\"').replace('\'', '"'))['url'],
                   "token": json.loads(data['fe_env'].replace(r'"', r'\"').replace('\'', '"'))['des']}
         gateway_env = {"url": json.loads(data['gateway'].replace(r'"', r'\"').replace('\'', '"'))['url']}
-        isopen = data['isopen'] == 'True'
-        result = status_generate(devices, fe_env, gateway_env, ID_MAPPING, isopen)
+        isopen = data['isopen']
+        result = status_generate(devices, fe_env, gateway_env, id_mapping, isopen)
         print(result)
         return HttpResponse(str(result))
     else:
@@ -943,6 +945,7 @@ def status_send(request):
 
 @login_check
 def set_data(request):
+    # TODO 展示model
     user = request.session["now_account"]
     if request.is_ajax():
         data = json.loads(request.body.decode('utf-8'))
@@ -954,9 +957,14 @@ def set_data(request):
 
         model = json.loads(read_json(user))
         print(model)
-        model['ID_MAPPING'][device_type].insert(0, id_channel)
-        model['dataModel'][device_type]['open'] = open_data
-        model['dataModel'][device_type]['close'] = close_data
+        # model['ID_MAPPING'][device_type].insert(0, id_channel)
+        # model['dataModel'][device_type]['open'] = open_data
+        # model['dataModel'][device_type]['close'] = close_data
+
+        model['ID_MAPPING'][device_type]['id_channel'].append(id_channel)
+        model['ID_MAPPING'][device_type]['open'] = open_data
+        model['ID_MAPPING'][device_type]['close'] = close_data
         print(model)
         write_json(user, model)
+        # TODO set data 的 process bar
         return HttpResponse('success')
