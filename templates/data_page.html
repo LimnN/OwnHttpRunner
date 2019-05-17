@@ -19,21 +19,21 @@
             <tbody>
                 <tr>
                     <td>
-                        <select class="selectpicker fe" name="fe_env">
+                        <select class="selectpicker show-tick fe" data-style="btn-primary" name="fe_env">
                             {% for e in env %}
                             <option value="{{ e }}">{{ e.name }}</option>
                             {% endfor %}
                         </select>
                     </td>
                     <td>
-                        <select class="selectpicker gateway" name="gateway_env">
+                        <select class="selectpicker gateway" data-style="btn-info" name="gateway_env">
                             {% for e in env %}
                             <option value="{{ e }}">{{ e.name }}</option>
                             {% endfor %}
                         </select>
                     </td>
                     <td>
-                        <select multiple class="selectpicker devices" data-live-search="true" data-actions-box="true"
+                        <select multiple class="selectpicker show-tick devices" data-style="btn-success" data-live-search="true" data-selected-text-format="count > 1" data-actions-box="true"
                             title="选择设备类型" name="devices">
                             {% for device in devices %}
                             <option value="{{ device }}">{{ device }}</option>
@@ -41,7 +41,7 @@
                         </select>
                     </td>
                     <td>
-                        <select class="selectpicker isopen" name="isopen">
+                        <select class="selectpicker isopen" data-style="btn-warning" name="isopen">
                             <option value="close">CLOSE</option>
                             <option value="open">OPEN</option>
                         </select>
@@ -76,7 +76,7 @@
             <tbody>
                 <tr>
                     <td>
-                        <select class="selectpicker device_set" data-live-search="true" name="device_set">
+                        <select class="selectpicker device_set" data-style="btn-success" data-live-search="true" name="device_set">
                             {% for device in devices %}
                             <option value="{{ device }}">{{ device }}</option>
                             {% endfor %}
@@ -84,21 +84,21 @@
                     </td>
                     <td>
                         <!--输出deviceID-->
-                        <div class="col-sm-9">
+                        <div class="col-sm-8">
                             <input name="set_id" type="text" class="form-control" id="set_id" placeholder="set deviceID"
                                 value="">
                         </div>
                     </td>
                     <td>
                         <!--输入open data-->
-                        <div class="col-sm-9">
+                        <div class="col-sm-8">
                             <input name="set_open" type="text" class="form-control" id="set_open"
                                 placeholder="set event open data" value="">
                         </div>
                     </td>
                     <td>
                         <!--输入close data-->
-                        <div class="col-sm-9">
+                        <div class="col-sm-8">
                             <input name="set_close" type="text" class="form-control" id="set_close"
                                 placeholder="set event close data" value="">
                         </div>
@@ -204,6 +204,7 @@
             myAlert('set data')
         }
         else {
+            processAlert()
             var data = {
                 "deviceType": device,
                 "id": id,
@@ -218,7 +219,7 @@
                     contentType: "application/json",
                     success: function (result) {
                         $('#process-alert_print').get(0).className = 'progress-bar progress-bar-success'
-                        $('#process-alert_print').text(result)
+                        $('#process-alert_print').text('success')
                     },
                     error: function () {
                         $('.am-modal-btn').click()
