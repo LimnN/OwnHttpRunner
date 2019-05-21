@@ -255,8 +255,7 @@ def read_json(user):
 
 
 def write_json(user, data):
-    # TODO 格式化写数据
     folder = mk_model_dir()
     file = folder + '\\' + user + '.json'
     with open(file, 'w') as f:
-        f.write(str(data).replace(r'"', r'\"').replace('\'', '"'))
+        f.write(json.dumps(data, sort_keys=True, indent=4, separators=(',', ':')))

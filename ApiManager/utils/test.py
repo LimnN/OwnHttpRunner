@@ -447,7 +447,7 @@ def query_map():
     index = 'active'
     limit = 0
     filters = 'time=1500000000~1600000000'
-              # '&area_district.id=eq.39'
+    # '&area_district.id=eq.39'
     # filters = 'time=1500000000~1600000000' \
     #           '&town.id=eq.2' \
     #           '&area_district.id=eq.39' \
@@ -482,7 +482,7 @@ def query_map():
 
 
 if __name__ == "__main__":
-    query()
+    # query()
     # query_map()
     # smokeopen()
     # smokeclose()
@@ -497,3 +497,7 @@ if __name__ == "__main__":
     #     # pressureopen()
     #     pressureevent()
     #     railwayopen()
+    tem = {'id_channel': [{'id': '863703037668410', 'channel': 'unicom'}], 'open': {'garbage': 12},
+           'close': {'garbage': 89}}
+    string = str(tem)
+    print(string)

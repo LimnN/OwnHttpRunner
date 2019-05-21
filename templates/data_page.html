@@ -33,7 +33,8 @@
                         </select>
                     </td>
                     <td>
-                        <select multiple class="selectpicker show-tick devices" data-style="btn-success" data-live-search="true" data-selected-text-format="count > 1" data-actions-box="true"
+                        <select multiple class="selectpicker show-tick devices" data-style="btn-success"
+                            data-live-search="true" data-selected-text-format="count > 1" data-actions-box="true"
                             title="选择设备类型" name="devices">
                             {% for device in devices %}
                             <option value="{{ device }}">{{ device }}</option>
@@ -76,7 +77,8 @@
             <tbody>
                 <tr>
                     <td>
-                        <select class="selectpicker device_set" data-style="btn-success" data-live-search="true" name="device_set">
+                        <select class="selectpicker device_set" data-style="btn-success" data-live-search="true"
+                            name="device_set">
                             {% for device in devices %}
                             <option value="{{ device }}">{{ device }}</option>
                             {% endfor %}
@@ -85,22 +87,22 @@
                     <td>
                         <!--输出deviceID-->
                         <div class="col-sm-8">
-                            <input name="set_id" type="text" class="form-control" id="set_id" placeholder="set deviceID"
-                                value="">
+                            <input name="set_id" type="text" class="form-control" id="set_id"
+                                placeholder='eg: {"id": "AAA", "channel": "BBB"}' value="">
                         </div>
                     </td>
                     <td>
                         <!--输入open data-->
                         <div class="col-sm-8">
                             <input name="set_open" type="text" class="form-control" id="set_open"
-                                placeholder="set event open data" value="">
+                                placeholder='eg: {"smoke": 200}' value="">
                         </div>
                     </td>
                     <td>
                         <!--输入close data-->
                         <div class="col-sm-8">
                             <input name="set_close" type="text" class="form-control" id="set_close"
-                                placeholder="set event close data" value="">
+                                placeholder='eg: {"smoke": 12}' value="">
                         </div>
                     </td>
                     <td>
@@ -117,7 +119,26 @@
                 </tr>
             </tbody>
         </table>
-
+        <br>
+        <div id="detail" style="display: none">
+            <button type="button" class="btn btn-primary" disabled>执行详情</button>
+            <pre>
+                <code class="json detail-data" id="detail-data">
+                </code>
+            </pre>
+        </div>
+        <div>
+            <select class="selectpicker data-show" data-style="btn-success" data-live-search="true" name="device_set"
+                title="选择设备类型以查看你的设置" data-hide-disabled="true" onchange="show_data()">
+                {% for device in devices %}
+                <option value="{{ device }}">{{ device }}</option>
+                {% endfor %}
+            </select>
+            <pre id="type">
+                <code class="json" id="type-data">
+                </code>
+            </pre>
+        </div>
     </form>
 </div>
 
@@ -138,6 +159,7 @@
         </div>
     </div>
 </div>
+
 <script type="text/javascript">
 
     function processAlert() {
@@ -178,7 +200,13 @@
                     contentType: "application/json",
                     success: function (result) {
                         $('#process-alert_print').get(0).className = 'progress-bar progress-bar-success'
-                        $('#process-alert_print').text(result)
+                        console.log(result)
+                        var json = JSON.parse(result)
+                        var detail = json.detail
+                        console.log(detail)
+                        document.getElementById('detail').style.display = 'block'
+                        $('.json.detail-data').text(result)
+                        $('#process-alert_print').text('success' + json.success + ' fail' + json.fail)
                     },
                     error: function () {
                         $('.am-modal-btn').click()
@@ -229,5 +257,26 @@
             )
         }
     }
+
+    function show_data() {
+        var type = $('.selectpicker.data-show').val()
+        console.log(type)
+        $.ajax(
+            {
+                type: 'post',
+                url: '/api/show_data/',
+                data: JSON.stringify(type),
+                contentType: "application/json",
+                success: function (result) {
+                    $('.json').text(result)
+                },
+                error: function () {
+                    $('.am-modal-btn').click()
+                    myAlert('error')
+                }
+            }
+        )
+    }
+
 </script>
 {% endblock %}

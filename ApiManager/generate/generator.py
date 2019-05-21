@@ -144,8 +144,6 @@ def send_status(env, token, body):
     }
 
     response = requests.request("POST", url, data=payload, headers=headers, params=querystring, verify=False)
-    print(payload)
-    print(response.json())
     return response.json()
 
 
@@ -161,34 +159,45 @@ def status_generate(devices, fe_env, gateway_env, id_mapping, isopen='close'):
     # ID_MAPPING = read_json(user)
     success = 0
     fail = 0
+    detail = []
     for device in devices:
-        if not id_mapping[device]:
-            fail += 1
-        else:
-            # send a status need
-            # 1. deviceType
-            # 2. deviceID
-            # 3. timestamp
-            # 4. data{}
-            # 5. token : get token need a channel
-            device_type = device
+        # send a status need
+        # 1. deviceType
+        # 2. deviceID
+        # 3. timestamp
+        # 4. data{}
+        # 5. token : get token need a channel
+        device_type = device
+        try:
             device_id = id_mapping[device_type]['id_channel'][0]['id']
+        except IndexError as e:
+            fail += 1
+            detail.append({device_type: 'data not set yet'})
+            print(e)
+            continue
 
-            data = id_mapping[device_type][isopen]
-            body = {
-                "deviceType": device_type,
-                "deviceID": device_id,
-                "timestamp": int(time.time()) - 120,
-                "data": data
-            }
+        data = id_mapping[device_type][isopen]
+        body = {
+            "deviceType": device_type,
+            "deviceID": device_id,
+            "timestamp": int(time.time()) - 120,
+            "data": data
+        }
 
-            device_channel = id_mapping[device]['id_channel'][0]['channel']
+        device_channel = id_mapping[device]['id_channel'][0]['channel']
+        try:
             token = get_token(gateway_env, device_channel, fe_env)
+        except KeyError as e:
+            print(e)
+            fail += 1
+            detail.append({device_type: 'fe_env error'})
+            continue
 
-            result = send_status(gateway_env, token, body)
-            if result['result'] == 'success':
-                success += 1
-            else:
-                fail += 1
-    result = {"success": success, "fail": fail}
+        result = send_status(gateway_env, token, body)
+        if result['result'] == 'success':
+            success += 1
+        else:
+            fail += 1
+        detail.append({device_type: {"request": body, "response": result}})
+    result = {"success": success, "fail": fail, "detail": detail}
     return result

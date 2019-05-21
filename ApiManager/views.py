@@ -938,33 +938,33 @@ def status_send(request):
         isopen = data['isopen']
         result = status_generate(devices, fe_env, gateway_env, id_mapping, isopen)
         print(result)
-        return HttpResponse(str(result))
+        return HttpResponse(json.dumps(result, sort_keys=True, indent=4, separators=(',', ':')))
     else:
         return render_to_response('data_page.html', {"env": env, "devices": device_type})
 
 
 @login_check
 def set_data(request):
-    # TODO 展示model
     user = request.session["now_account"]
     if request.is_ajax():
         data = json.loads(request.body.decode('utf-8'))
-        print(data)
         device_type = data['deviceType']
         id_channel = json.loads(data['id'])
         open_data = json.loads(data['open'])
         close_data = json.loads(data['close'])
 
         model = json.loads(read_json(user))
-        print(model)
-        # model['ID_MAPPING'][device_type].insert(0, id_channel)
-        # model['dataModel'][device_type]['open'] = open_data
-        # model['dataModel'][device_type]['close'] = close_data
-
         model['ID_MAPPING'][device_type]['id_channel'].append(id_channel)
         model['ID_MAPPING'][device_type]['open'] = open_data
         model['ID_MAPPING'][device_type]['close'] = close_data
-        print(model)
         write_json(user, model)
-        # TODO set data 的 process bar
         return HttpResponse('success')
+
+
+def show_data(request):
+    user = request.session["now_account"]
+    if request.is_ajax():
+        data = json.loads(request.body.decode('utf-8'))
+        model = json.loads(read_json(user))
+        result = json.dumps(model['ID_MAPPING'][data], sort_keys=True, indent=4, separators=(',', ':'))
+        return HttpResponse(result)
