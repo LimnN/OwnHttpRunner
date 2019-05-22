@@ -3,6 +3,7 @@
 {% load staticfiles %}
 {% load custom_tags %}
 {% block content %}
+<script>hljs.initHighlightingOnLoad();</script>
 
 <div class="admin-biaogelist">
     <form class="am-form am-g" id='status_gen' name="status_gen">
@@ -86,21 +87,21 @@
                     </td>
                     <td>
                         <!--输出deviceID-->
-                        <div class="col-sm-8">
+                        <div class="col-sm-9">
                             <input name="set_id" type="text" class="form-control" id="set_id"
                                 placeholder='eg: {"id": "AAA", "channel": "BBB"}' value="">
                         </div>
                     </td>
                     <td>
                         <!--输入open data-->
-                        <div class="col-sm-8">
+                        <div class="col-sm-9">
                             <input name="set_open" type="text" class="form-control" id="set_open"
                                 placeholder='eg: {"smoke": 200}' value="">
                         </div>
                     </td>
                     <td>
                         <!--输入close data-->
-                        <div class="col-sm-8">
+                        <div class="col-sm-9">
                             <input name="set_close" type="text" class="form-control" id="set_close"
                                 placeholder='eg: {"smoke": 12}' value="">
                         </div>
@@ -123,7 +124,7 @@
         <div id="detail" style="display: none">
             <button type="button" class="btn btn-primary" disabled>执行详情</button>
             <pre>
-                <code class="json detail-data" id="detail-data">
+                <code id="detail-data">
                 </code>
             </pre>
         </div>
@@ -135,7 +136,7 @@
                 {% endfor %}
             </select>
             <pre id="type">
-                <code class="json" id="type-data">
+                <code id="type-data">
                 </code>
             </pre>
         </div>
@@ -162,6 +163,7 @@
 
 <script type="text/javascript">
 
+    hljs.initHighlightingOnLoad();
     function processAlert() {
         $('#process-alert').modal(
             {
@@ -200,12 +202,11 @@
                     contentType: "application/json",
                     success: function (result) {
                         $('#process-alert_print').get(0).className = 'progress-bar progress-bar-success'
-                        console.log(result)
                         var json = JSON.parse(result)
                         var detail = json.detail
-                        console.log(detail)
                         document.getElementById('detail').style.display = 'block'
-                        $('.json.detail-data').text(result)
+                        $('#detail-data').text(result)
+
                         $('#process-alert_print').text('success' + json.success + ' fail' + json.fail)
                     },
                     error: function () {
@@ -260,7 +261,6 @@
 
     function show_data() {
         var type = $('.selectpicker.data-show').val()
-        console.log(type)
         $.ajax(
             {
                 type: 'post',
@@ -268,7 +268,8 @@
                 data: JSON.stringify(type),
                 contentType: "application/json",
                 success: function (result) {
-                    $('.json').text(result)
+                    $('#type-data').text(result)
+                    $('#type-data')
                 },
                 error: function () {
                     $('.am-modal-btn').click()

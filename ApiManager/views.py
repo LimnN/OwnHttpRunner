@@ -894,13 +894,14 @@ def record_view(request, name):
     return render_to_response('preview.html', {'name': name, 'suite': test_cases, 'suite_count': suite_count,
                                                'manage_info': manage_info})
 
-
+# TODO use ajax to download & delete records
 @login_check
 def delete_record(request, name):
     upload_folder = mk_upload_dir()
     file = upload_folder + '\\' + name
     XmindCase.objects.filter(xmind_file=file).delete()
     records_list = get_recent_records()
+    print(records_list)
     paginator = Paginator(records_list, 10)
     page = request.GET.get('page')
     try:
@@ -909,12 +910,12 @@ def delete_record(request, name):
         records = paginator.page(1)
     except EmptyPage:
         records = paginator.page(paginator.num_pages)
+    print(records)
     return render_to_response('xmind2testcase.html', {"records": records})
 
 
 @login_check
 def status_send(request):
-    # TODO 添加异常处理
     user = request.session["now_account"]
     query = EnvInfo.objects.all().order_by('-create_time').values('env_name', 'base_url', 'simple_desc')
     # a = model_to_dict(env)

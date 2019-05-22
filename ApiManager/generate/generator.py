@@ -199,5 +199,4 @@ def status_generate(devices, fe_env, gateway_env, id_mapping, isopen='close'):
         else:
             fail += 1
         detail.append({device_type: {"request": body, "response": result}})
-    result = {"success": success, "fail": fail, "detail": detail}
-    return result
+    return {"success": success, "fail": fail, "detail": detail}
