@@ -37,9 +37,24 @@ ID_MAPPING = {
         "open": {}
     },
     "ElevatorSensor": {
-        "close": {},
-        "id_channel": [],
-        "open": {}
+        "close": {
+            "direction": 1,
+            "speed": 0.2,
+            "floor": 3,
+            "trouble_type": []
+        },
+        "id_channel": [
+            {
+                "id": "MX000579",
+                "channel": "telecom"
+            }
+        ],
+        "open": {
+            "direction": 1,
+            "speed": 0.2,
+            "floor": 3,
+            "trouble_type": [2, 1]
+        }
     },
     "FireAlarmSensor": {
         "close": {},
@@ -132,12 +147,12 @@ ID_MAPPING = {
     },
     "WaterPressureSensor": {
         "close": {
-            "pressure": 0.001
+            "pressure": 0.5
         },
         "id_channel": [
             {
                 "channel": "sii",
-                "id": "D1538040277089"
+                "id": "D1538040276673"
             }
         ],
         "open": {
@@ -155,9 +170,24 @@ ID_MAPPING = {
         "open": {}
     },
     "WellCoverSensor": {
-        "close": {},
-        "id_channel": [],
-        "open": {}
+        "close": {
+            "door_status": True,
+            "signal": 98,
+            "water_level": [100],
+            "water_level_status": False
+        },
+        "id_channel": [
+            {
+                "id": "863703039111716",
+                "channel": "unicom"
+            }
+        ],
+        "open": {
+            "door_status": True,
+            "signal": 98,
+            "water_level": [400],
+            "water_level_status": True
+        }
     }
 }
 
@@ -170,15 +200,15 @@ if __name__ == '__main__':
     # 1. status stuffgeo vortex saige camera etc
     status_devices = ['VehicleGeolocating', 'StuffGeolocating', 'ParkingLotSystem']
     # 2. events open or close
-    events_devices = ['SmokeDetectionSensor', 'WaterPressureSensor']
+    events_devices = ['WaterPressureSensor', 'WellCoverSensor', 'ElevatorSensor']
     devices = status_devices + events_devices
     # devices = ['VehicleGeolocating', 'StuffGeolocating']
-    status_generate(['StuffGeolocating'], env_fe, env_gateway, ID_MAPPING, 'close')
+    status_generate(events_devices, env_fe, env_gateway, ID_MAPPING, 'open')
     # print(get_metadata(env_fe, 'api-key'))
     # select event number to create? maybe
     # TODO maybe set num\ town\ time ?
     # two part : need status? need events?
     # select date & time maybe
     # select town & district maybe
+    # select channel maybe
     # select how many devices? eg. 1 WellCoverSensor 3 DoorSensors
-    # set device type data model

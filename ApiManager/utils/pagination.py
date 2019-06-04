@@ -1,6 +1,7 @@
 from django.utils.safestring import mark_safe
 
 from ApiManager.models import ModuleInfo, TestCaseInfo, TestSuite
+from ApiManager.utils.utils import get_recent_records
 
 
 class PageInfo(object):
@@ -111,6 +112,9 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
         obj = obj.filter(project_name__contains=belong_project) if belong_project != 'All' \
             else obj.filter(responsible_name__contains=user)
 
+    elif url == '/api/xmind2testcase/':
+        obj = get_recent_records()
+
     elif url == '/api/module_list/':
 
         if belong_project != 'All':
@@ -150,13 +154,19 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
             else:
                 obj = obj.filter(name__contains=name) if name is not '' else obj.filter(author__contains=user)
 
-    if url != '/api/periodictask/':
+    if url == '/api/xmind2testcase/':
+        pass
+
+    elif url != '/api/periodictask/':
         obj = obj.order_by('-update_time')
 
     else:
         obj = obj.order_by('-date_changed')
 
-    total = obj.count()
+    if url == '/api/xmind2testcase/':
+        total = len(obj)
+    else:
+        total = obj.count()
 
     page_info = PageInfo(id, total, per_items=per_items)
     info = obj[page_info.start:page_info.end]

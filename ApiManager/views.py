@@ -810,18 +810,13 @@ def echo(request):
 
 
 @login_check
-def xmind2testcase(request):
-    account = request.session["now_account"]
-    records_list = get_recent_records()
-    paginator = Paginator(records_list, 10)
-    page = request.GET.get('page')
-    try:
-        records = paginator.page(page)
-    except PageNotAnInteger:
-        records = paginator.page(1)
-    except EmptyPage:
-        records = paginator.page(paginator.num_pages)
-    return render_to_response('xmind2testcase.html', {"records": records})
+def xmind2testcase(request, id):
+    xmind_list = get_pager_info(XmindCase, None, '/api/xmind2testcase/', id)
+    manage_info = {
+        "records": xmind_list[1],
+        "page_list": xmind_list[0]
+    }
+    return render_to_response('xmind2testcase.html', manage_info)
 
 
 class UploadForm(forms.Form):
@@ -896,22 +891,31 @@ def record_view(request, name):
 
 # TODO use ajax to download & delete records
 @login_check
-def delete_record(request, name):
-    upload_folder = mk_upload_dir()
-    file = upload_folder + '\\' + name
-    XmindCase.objects.filter(xmind_file=file).delete()
-    records_list = get_recent_records()
-    print(records_list)
-    paginator = Paginator(records_list, 10)
-    page = request.GET.get('page')
-    try:
-        records = paginator.page(page)
-    except PageNotAnInteger:
-        records = paginator.page(1)
-    except EmptyPage:
-        records = paginator.page(paginator.num_pages)
-    print(records)
-    return render_to_response('xmind2testcase.html', {"records": records})
+def delete_record(request):
+    if request.is_ajax():
+        upload_folder = mk_upload_dir()
+        name = json.loads(request.body.decode('utf-8'))
+        file = upload_folder + '\\' + name
+        XmindCase.objects.filter(xmind_file=file).delete()
+        try:
+            os.remove(file)
+            os.remove(file[:-6] + '.xlsx')
+        except FileNotFoundError as e:
+            print(e)
+
+        records_list = get_recent_records()
+        # print(records_list)
+        # paginator = Paginator(records_list, 10)
+        # page = request.GET.get('page')
+        # try:
+        #     records = paginator.page(page)
+        # except PageNotAnInteger:
+        #     records = paginator.page(1)
+        # except EmptyPage:
+        #     records = paginator.page(paginator.num_pages)
+        # print(records)
+        # return render_to_response('xmind2testcase.html', {"records": records})
+        return HttpResponse(records_list)
 
 
 @login_check
@@ -962,6 +966,7 @@ def set_data(request):
         return HttpResponse('success')
 
 
+# TODO download & upload model json file
 def show_data(request):
     user = request.session["now_account"]
     if request.is_ajax():

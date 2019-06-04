@@ -3,8 +3,6 @@
 {% load staticfiles %}
 {% load custom_tags %}
 {% block content %}
-<script>hljs.initHighlightingOnLoad();</script>
-
 <div class="admin-biaogelist">
     <form class="am-form am-g" id='status_gen' name="status_gen">
         <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
@@ -123,10 +121,7 @@
         <br>
         <div id="detail" style="display: none">
             <button type="button" class="btn btn-primary" disabled>执行详情</button>
-            <pre>
-                <code id="detail-data">
-                </code>
-            </pre>
+            <pre><code class="language-json" id="detail-data"></code></pre>
         </div>
         <div>
             <select class="selectpicker data-show" data-style="btn-success" data-live-search="true" name="device_set"
@@ -135,10 +130,7 @@
                 <option value="{{ device }}">{{ device }}</option>
                 {% endfor %}
             </select>
-            <pre id="type">
-                <code id="type-data">
-                </code>
-            </pre>
+            <pre id="type"><code class="language-json" id="type-data"></code></pre>
         </div>
     </form>
 </div>
@@ -163,7 +155,6 @@
 
 <script type="text/javascript">
 
-    hljs.initHighlightingOnLoad();
     function processAlert() {
         $('#process-alert').modal(
             {
@@ -206,7 +197,7 @@
                         var detail = json.detail
                         document.getElementById('detail').style.display = 'block'
                         $('#detail-data').text(result)
-
+                        Prism.highlightAll()
                         $('#process-alert_print').text('success' + json.success + ' fail' + json.fail)
                     },
                     error: function () {
@@ -260,16 +251,16 @@
     }
 
     function show_data() {
-        var type = $('.selectpicker.data-show').val()
+        var device = $('.selectpicker.data-show').val()
         $.ajax(
             {
                 type: 'post',
                 url: '/api/show_data/',
-                data: JSON.stringify(type),
+                data: JSON.stringify(device),
                 contentType: "application/json",
                 success: function (result) {
                     $('#type-data').text(result)
-                    $('#type-data')
+                    Prism.highlightAll()
                 },
                 error: function () {
                     $('.am-modal-btn').click()

@@ -5,17 +5,16 @@
 {% block content %}
 
 <div class="admin-biaogelist">
-        <div class="splash-head">
-            <div class="select-xmind splash-subhead">
-                <form method="post" enctype="multipart/form-data" action="/api/generate_testcase/">
-                    <label id="file-label" for="file">
-                        --> 点击这里选择您的XMind文件<-- 
-                    </label> 
-                    <input id="file" accept=".xmind" type="file" name="file" required /><br>
+    <div class="splash-head">
+        <div class="select-xmind splash-subhead">
+            <form method="post" enctype="multipart/form-data" action="/api/generate_testcase/">
+                <label id="file-label" for="file">
+                    --> 点击这里选择您的XMind文件
+                    <-- </label> <input id="file" accept=".xmind" type="file" name="file" required /><br>
                     <input type="submit" class="pure-button " value="开始转换" />
-                </form>
-            </div>
+            </form>
         </div>
+    </div>
     <form class="am-form am-g" id='test_list' name="test_list">
 
         <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
@@ -31,10 +30,11 @@
                 <tr>
                     <td title="{{ record }}"> {{ record.name }}</td>
                     <td>{{ record.time }}</td>
-                    <td><a href="/api/file_download/{{ record.xmind_file }}">XMIND</a> |
+                    <td>
+                        <a href="/api/file_download/{{ record.xmind_file }}">XMIND</a> |
                         <a href="/api/file_download/{{ record.xlsx_file }}">XLSX</a> |
                         <a href="/api/record_view/{{ record.xmind_file }}">PREVIEW</a> |
-                        <a href="/api/delete_record/{{ record.xmind_file }}">DELETE</a>
+                        <a href="javascript:delete_record('{{ record.xmind_file }}');">DELETE</a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -63,6 +63,26 @@
             document.getElementById("file-label").innerHTML = this.value.split("\\").pop();
         }
     });
+
+    function delete_record(file_name) {
+        console.log(file_name)
+        $.ajax(
+            {
+                type: 'post',
+                url: '/api/delete_record/',
+                data: JSON.stringify(file_name),
+                contentType: "application/json",
+                success: function (result) {
+                    console.log(result)
+                    // $('.am-table.am-table-bordered.am-table-radius.am-table-striped').reload(true);
+                    location.reload(true);
+                },
+                error: function () {
+
+                }
+            }
+        )
+    }
 </script>
 
 {% endblock %}

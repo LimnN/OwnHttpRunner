@@ -484,7 +484,7 @@ def query_map():
 if __name__ == "__main__":
     # query()
     # query_map()
-    # smokeopen()
+    smokeopen()
     # smokeclose()
     # railwayopen()
     # for i in range(200):
@@ -497,7 +497,7 @@ if __name__ == "__main__":
     #     # pressureopen()
     #     pressureevent()
     #     railwayopen()
-    tem = {'id_channel': [{'id': '863703037668410', 'channel': 'unicom'}], 'open': {'garbage': 12},
-           'close': {'garbage': 89}}
-    string = str(tem)
-    print(string)
+    # tem = {'id_channel': [{'id': '863703037668410', 'channel': 'unicom'}], 'open': {'garbage': 12},
+    #        'close': {'garbage': 89}}
+    # string = str(tem)
+    # print(string)
