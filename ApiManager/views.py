@@ -11,7 +11,6 @@ from django.shortcuts import render_to_response, render
 from django.utils.encoding import escape_uri_path
 from django.utils.safestring import mark_safe
 from djcelery.models import PeriodicTask
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from dwebsocket import accept_websocket
 
 from ApiManager import separator
@@ -889,7 +888,7 @@ def record_view(request, name):
     return render_to_response('preview.html', {'name': name, 'suite': test_cases, 'suite_count': suite_count,
                                                'manage_info': manage_info})
 
-# TODO use ajax to download & delete records
+
 @login_check
 def delete_record(request):
     if request.is_ajax():

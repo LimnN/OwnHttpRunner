@@ -3,6 +3,8 @@
     line-height: 2em;
     text-decoration: none;
     display: block;
+    color: #5eb95e;
+    text-align: center;
 }
 
 #file-label:hover {
@@ -65,7 +67,7 @@
 }
 
 .select-xmind {
-    border-bottom: 2px solid #FFF;
+    /* border-bottom: 2px solid #FFF; */
     margin: auto;
     padding-bottom: 2em;
     width: 60%;
@@ -104,9 +106,14 @@
 }
 
 .splash-head {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
-    color: #FFF;
+    /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2); */
+    color: #f1f2f7;
     padding: 1.5em 1.6em;
+    background-color: #fff;
+    width: 98%;
+    margin: 15px auto 15px auto;
+    padding: 15px .9em 1px 1em;
+    font-size: 14px;
 }
 
 .splash-head p {
