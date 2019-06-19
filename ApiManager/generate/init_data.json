@@ -1,0 +1,100 @@
+{
+    "rules": [
+        {
+            "rule_json": {
+                "name": "for-test-rule1临汾路街道独居养老服务-居户门磁警报",
+                "type": "smart",
+                "enabled": 1,
+                "smartRule": {
+                    "eventType": [
+                        "公共服务",
+                        "社区养老"
+                    ],
+                    "eventLevel": "一般事件",
+                    "targetParentAreaID": 2,
+                    "targetParentAreaCategory": "小区",
+                    "description": "PTscene独居养老服务",
+                    "occurDateRanges": [
+                        {
+                            "beginSecondsOfDay": 0,
+                            "endSecondsOfDay": 86400
+                        }
+                    ],
+                    "triggerConditions": [
+                        {
+                            "numDevices": 1,
+                            "deviceType": "RegisterDoorSensor",
+                            "genericPropertyName": "door_status",
+                            "matchMode": "Equal",
+                            "value": "true",
+                            "secondsLasts": 10
+                        }
+                    ],
+                    "triggerLogicAnd": 0
+                }
+            },
+            "point": {
+                "id": 0,
+                "name": "测试点位for-test-rule1",
+                "address": "测试平台点位for-rule1",
+                "category": "点位",
+                "sponsors": [],
+                "data": {
+                    "area_district": {
+                        "areaID": 39,
+                        "areaCategory": "区",
+                        "areaName": "静安区"
+                    },
+                    "PTsence": "独居养老服务",
+                    "town": {
+                        "areaID": 2,
+                        "areaCategory": "街道",
+                        "areaName": "临汾路街道"
+                    },
+                    "location": {
+                        "latitude": 31.3160922387,
+                        "system": "wgs84",
+                        "longitude": 121.457645156
+                    }
+                },
+                "parentID": 64
+            },
+            "device": {
+                "deviceID": "for-test-rule1",
+                "deviceType": "RegisterDoorSensor",
+                "channel": "sii",
+                "data": {
+                    "address": "临汾路街道-小区点位-详细地址xxx-device",
+                    "town": "临汾路街道",
+                    "vendor": "联数物联",
+                    "district": "静安区",
+                    "isVirtual": false,
+                    "isSensor": true,
+                    "setup_time": 1522339200,
+                    "location": {
+                        "latitude": 31.3160922387,
+                        "system": "wgs84",
+                        "longitude": 121.457645156
+                    },
+                    "PTscene": "独居养老服务",
+                    "area_district": "静安区"
+                }
+            },
+            "open_data": {
+                "door_status": true
+            },
+            "close_data": {
+                "door_status": false
+            },
+            "tags": [
+                "临汾路街道",
+                "一般事件",
+                [
+                    "公共服务",
+                    "社区养老"
+                ],
+                "独居养老服务"
+            ]
+        }
+    ]
+}

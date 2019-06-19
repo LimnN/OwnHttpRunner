@@ -965,7 +965,6 @@ def set_data(request):
         return HttpResponse('success')
 
 
-# TODO download & upload model json file
 def show_data(request):
     user = request.session["now_account"]
     if request.is_ajax():
@@ -973,3 +972,5 @@ def show_data(request):
         model = json.loads(read_json(user))
         result = json.dumps(model['ID_MAPPING'][data], sort_keys=True, indent=4, separators=(',', ':'))
         return HttpResponse(result)
+
+# TODO 1. set rules points device opendata closedata 2. check if set data 3. modify set data
