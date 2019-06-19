@@ -1,7 +1,5 @@
 import requests
 import json
-import time
-from ApiManager.generate.generator import get_imagedata
 
 """
     What we want?

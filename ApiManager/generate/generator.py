@@ -46,61 +46,6 @@ def get_token(env, channel, fe_env):
     return token
 
 
-# def set_body(device_type, device_id, data_model, isopen=None):
-#     data = set_data(device_type, data_model, isopen)
-#     return {
-#         "deviceType": device_type,
-#         "deviceID": device_id,
-#         "timestamp": int(time.time()) - 120,
-#         "data": data
-#     }
-
-
-# def set_data(device_type, data_model, isopen=None):
-#     """
-#
-#     :param data_model: a dict like
-#     :param device_type:
-#     :param isopen:
-#     :return: a json dict
-#     """
-#     return {
-#         'SmokeDetectionSensor': lambda switch: data_model['SmokeDetectionSensor']['open']
-#         if switch else data_model['SmokeDetectionSensor']['close'],
-#         'WaterPressureSensor': lambda switch: {"pressure": round(random.uniform(0.11, 1), 2)}
-#         if switch else {"pressure": round(random.uniform(0, 0.09), 2)},
-#         'TrashBin': lambda switch: {"garbage": 12}
-#         if switch else {"garbage": 89},
-#         "VehicleGeolocating": lambda switch: {
-#             "work_status": False,
-#             "carNum": "\u6caaD67581",
-#             "temperature": random.randrange(12, 40, 1),
-#             "longitude": 121.4557008,
-#             "course": 7,
-#             "mile": 2607,
-#             "latitude": 31.231937,
-#             "speed": random.randrange(20, 60, 2)
-#         },
-#         "StuffGeolocating": lambda switch: {
-#             "latitude": 31.2310654404,
-#             "work_status": True,
-#             "working_hours": random.randrange(1, 10, 2),
-#             "name": "\u5434\u96ef\u7ee2",
-#             "longitude": 121.4537033905
-#         },
-#         "ParkingLotSystem": lambda switch: {
-#             "num_park_free": random.randrange(0, 200, 1),
-#             "num_guest_park_free": random.randrange(0, 200, 1),
-#             "num_monthly_park_free": random.randrange(0, 200, 1)
-#         },
-#         "CameraPeopleCountingSystem": lambda switch: {
-#             "num_stay": random.randrange(0, 5000, 1),
-#             "num_enter": random.randrange(0, 5000, 1),
-#             "num_leave": random.randrange(0, 5000, 1)
-#         }
-#     }[device_type](isopen)
-
-
 def get_imagedata(isarray):
     """
     :param isarray: is a list? True or False
