@@ -1,138 +1,97 @@
 {% extends "base.html" %}
-{% block title %}data generate{% endblock %}
+{% block title %}造一些数据{% endblock %}
 {% load staticfiles %}
 {% load custom_tags %}
 {% block content %}
 <div class="admin-biaogelist">
-    <form class="am-form am-g" id='status_gen' name="status_gen">
-        <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
-            <thead>
-                <tr class="am-success">
-                    <th class="table-title">选择fe-api环境</th>
-                    <th class="table-type">选择gateway环境</th>
-                    <th class="table-type">选择设备类型</th>
-                    <th class="table-type">True or False</th>
-                    <th width="163px" class="table-title">操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <select class="selectpicker show-tick fe" data-style="btn-primary" name="fe_env">
-                            {% for e in env %}
-                            <option value="{{ e }}">{{ e.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                    <td>
-                        <select class="selectpicker gateway" data-style="btn-info" name="gateway_env">
-                            {% for e in env %}
-                            <option value="{{ e }}">{{ e.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                    <td>
-                        <select multiple class="selectpicker show-tick devices" data-style="btn-success"
-                            data-live-search="true" data-selected-text-format="count > 1" data-actions-box="true"
-                            title="选择设备类型" name="devices">
-                            {% for device in devices %}
-                            <option value="{{ device }}">{{ device }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                    <td>
-                        <select class="selectpicker isopen" data-style="btn-warning" name="isopen">
-                            <option value="close">CLOSE</option>
-                            <option value="open">OPEN</option>
-                        </select>
-                    </td>
-                    <td>
-                        <div class="am-btn-toolbar">
-                            <div class="am-btn-group am-btn-group-xs">
-                                <button type="button" class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
-                                    data-am-popover="{content: '执行', trigger: 'hover focus'}" onclick="start_gen()">
-                                    <span class="am-icon-bug"></span>
-                                </button>
 
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <!-- 选择环境 -->
+    <div class="splash-head">
+        <form class="am-form am-g" id="env-select" name="env-select">
+            <h2 class="am-serif am-text-primary">1. 选择你的环境</h2>
 
-    </form>
-    <form class="am-form am-g" id='set_device_data' name="set_device_data">
-        <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
-            <thead>
-                <tr class="am-success">
-                    <th class="table-title">选择设备类型</th>
-                    <th class="table-type">设置deviceInfo</th>
-                    <th class="table-type">设置事件open data</th>
-                    <th class="table-type">设置事件close data</th>
-                    <th width="163px" class="table-title">操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <select class="selectpicker device_set" data-style="btn-success" data-live-search="true"
-                            name="device_set">
-                            {% for device in devices %}
-                            <option value="{{ device }}">{{ device }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                    <td>
-                        <!--输出deviceID-->
-                        <div class="col-sm-9">
-                            <input name="set_id" type="text" class="form-control" id="set_id"
-                                placeholder='eg: {"id": "AAA", "channel": "BBB"}' value="">
-                        </div>
-                    </td>
-                    <td>
-                        <!--输入open data-->
-                        <div class="col-sm-9">
-                            <input name="set_open" type="text" class="form-control" id="set_open"
-                                placeholder='eg: {"smoke": 200}' value="">
-                        </div>
-                    </td>
-                    <td>
-                        <!--输入close data-->
-                        <div class="col-sm-9">
-                            <input name="set_close" type="text" class="form-control" id="set_close"
-                                placeholder='eg: {"smoke": 12}' value="">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="am-btn-toolbar">
-                            <div class="am-btn-group am-btn-group-xs">
-                                <button type="button" class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
-                                    data-am-popover="{content: '设置', trigger: 'hover focus'}" onclick="set_data()">
-                                    <span class="am-icon-bug"></span>
-                                </button>
+            <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
+                <thead>
+                    <tr class="am-success">
+                        <th>fe-api</th>
+                        <th>gateway-api</th>
+                        <th>screen-api</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <select class="selectpicker show-tick fe_env" data-style="btn-primary" data-width="250px"
+                                id="fe_env">
+                                {% for e in env %}
+                                <option value="{{ e }}">{{ e.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select class="selectpicker show-tick gateway_env" data-style="btn-info" data-width="250px"
+                                id="gateway_env">
+                                {% for e in env %}
+                                <option value="{{ e }}">{{ e.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select class="selectpicker show-tick screen_env" data-style="btn-success"
+                                data-width="250px" id="screen_env">
+                                {% for e in env %}
+                                <option value="{{ e }}">{{ e.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
 
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <br>
-        <div id="detail" style="display: none">
-            <button type="button" class="btn btn-primary" disabled>执行详情</button>
-            <pre><code class="language-json" id="detail-data"></code></pre>
-        </div>
-        <div>
-            <select class="selectpicker data-show" data-style="btn-success" data-live-search="true" name="device_set"
-                title="选择设备类型以查看你的设置" data-hide-disabled="true" onchange="show_data()">
-                {% for device in devices %}
-                <option value="{{ device }}">{{ device }}</option>
-                {% endfor %}
-            </select>
-            <pre id="type"><code class="language-json" id="type-data"></code></pre>
-        </div>
-    </form>
+    <!-- 造数据 -->
+    <!-- 1. disable rule 2. execute 3. view result -->
+    <div class="splash-head">
+        <form class="am-form am-g" id="env-select" name="env-select">
+            <div>
+                <h2 class="am-serif am-text-primary">2. 发送设备状态 生产事件</h2>
+            </div>
+            <ul class="am-avg-sm-3">
+                <li>
+                    <button type="button" class="am-btn am-btn-warning am-round am-btn-lg"
+                        data-am-popover="{content: 'Disable已存在的规则（可选）', trigger: 'hover focus'}" style="width: 250px"
+                        onclick="disable_rule()">Disable Rule</button>
+
+                </li>
+                <li>
+                    <button type="button" class="am-btn am-btn-primary am-round am-btn-lg"
+                        data-am-popover="{content: '开始发送状态数据', trigger: 'hover focus'}" style="width: 250px"
+                        onclick="execute()">Execute</button>
+
+                </li>
+
+            </ul>
+
+        </form>
+
+    </div>
+
+    <!-- 结果区 -->
+    <div class="splash-head">
+        <form class="am-form am-g" id="json-view" name="json-view">
+            <div>
+                <h2 class="am-serif am-text-primary">3. 结果区</h2>
+            </div>
+            <div id="detail" style="display: none">
+                <button type="button" class="btn btn-primary" disabled>执行详情</button>
+                <pre><code class="language-json" id="detail-data"></code></pre>
+            </div>
+
+
+        </form>
+    </div>
+
 </div>
 
 
@@ -155,6 +114,47 @@
 
 <script type="text/javascript">
 
+    function disable_rule() {
+
+
+    }
+
+    function execute() {
+        var fe = $('.selectpicker.fe_env').val()
+        var gateway = $('.selectpicker.gateway_env').val()
+        var screen = $('.selectpicker.screen_env').val()
+        console.log(fe)
+        processAlert()
+        var data = {
+            "action": "execute",
+            "fe": fe,
+            "gateway": gateway,
+            "screen": screen
+        }
+        $.ajax(
+            {
+                type: 'post',
+                url: '/api/status_send/',
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                success: function (result) {
+                    $('#process-alert_print').get(0).className = 'progress-bar progress-bar-success'
+                    var json = JSON.parse(result)
+                    var detail = json.detail
+                    document.getElementById('detail').style.display = 'block'
+                    $('#detail-data').text(result)
+                    Prism.highlightAll()
+                    $('#process-alert_print').text('success' + json.success + ' fail' + json.fail)
+                    console.log(result)
+                },
+                error: function () {
+                    $('.am-modal-btn').click()
+                    myAlert('error')
+                }
+            }
+        )
+    }
+
     function processAlert() {
         $('#process-alert').modal(
             {
@@ -166,108 +166,6 @@
     function processReset() {
         $('#process-alert_print').text("处理中")
         $('#process-alert_print').get(0).className = 'progress-bar progress-bar-warning progress-bar-striped active'
-    }
-
-    function start_gen() {
-        var fe = $('.selectpicker.fe').val()
-        var gateway = $('.selectpicker.gateway').val()
-        var devices = $('.selectpicker.devices').val()
-        var isopen = $('.selectpicker.isopen').val()
-        if (devices === null) {
-            myAlert('please select device type ')
-        }
-        else {
-            processAlert()
-            var data = {
-                "fe_env": fe,
-                "gateway": gateway,
-                "devices": devices,
-                "isopen": isopen
-            }
-
-            $.ajax(
-                {
-                    type: 'post',
-                    url: '/api/status_send/',
-                    data: JSON.stringify(data),
-                    contentType: "application/json",
-                    success: function (result) {
-                        $('#process-alert_print').get(0).className = 'progress-bar progress-bar-success'
-                        var json = JSON.parse(result)
-                        var detail = json.detail
-                        document.getElementById('detail').style.display = 'block'
-                        $('#detail-data').text(result)
-                        Prism.highlightAll()
-                        $('#process-alert_print').text('success' + json.success + ' fail' + json.fail)
-                    },
-                    error: function () {
-                        $('.am-modal-btn').click()
-                        myAlert('error')
-                    }
-                }
-            )
-        }
-    }
-
-    function set_data() {
-        var device = $('.selectpicker.device_set').val()
-        var id = $("input[id='set_id']").val() //including channel
-        var open = $("input[id='set_open']").val()
-        var close = $("input[id='set_close']").val()
-        if (device === null) {
-            myAlert('set device type')
-        }
-        else if (id === "") {
-            myAlert('set device id')
-        }
-        else if (open === "" && close === "") {
-            myAlert('set data')
-        }
-        else {
-            processAlert()
-            var data = {
-                "deviceType": device,
-                "id": id,
-                "open": open,
-                "close": close
-            }
-            $.ajax(
-                {
-                    type: 'post',
-                    url: '/api/set_data/',
-                    data: JSON.stringify(data),
-                    contentType: "application/json",
-                    success: function (result) {
-                        $('#process-alert_print').get(0).className = 'progress-bar progress-bar-success'
-                        $('#process-alert_print').text('success')
-                    },
-                    error: function () {
-                        $('.am-modal-btn').click()
-                        myAlert('error')
-                    }
-                }
-            )
-        }
-    }
-
-    function show_data() {
-        var device = $('.selectpicker.data-show').val()
-        $.ajax(
-            {
-                type: 'post',
-                url: '/api/show_data/',
-                data: JSON.stringify(device),
-                contentType: "application/json",
-                success: function (result) {
-                    $('#type-data').text(result)
-                    Prism.highlightAll()
-                },
-                error: function () {
-                    $('.am-modal-btn').click()
-                    myAlert('error')
-                }
-            }
-        )
     }
 
 </script>

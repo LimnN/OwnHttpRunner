@@ -242,14 +242,14 @@ def mk_model_dir():
 
 def read_json(user):
     folder = mk_model_dir()
-    init = folder + '\\' + 'init.json'
+    init = folder + '\\' + 'init_data.json'
     file = folder + '\\' + user + '.json'
     if not os.path.isfile(file) or not os.path.getsize(file):
         shutil.copyfile(init, file)
-        with open(file) as data:
+        with open(file, encoding='utf-8') as data:
             model = data.read()
     else:
-        with open(file) as data:
+        with open(file, encoding='utf-8') as data:
             model = data.read()
     return model
 

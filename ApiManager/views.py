@@ -29,6 +29,7 @@ from ApiManager.utils.task_opt import delete_task, change_task_status
 from ApiManager.utils.testcase import get_time_stamp
 from httprunner import HttpRunner
 from ApiManager.generate.generator import status_generate
+from ApiManager.generate.prepare import model_set
 from ApiManager.utils.utils import get_xmind_testsuites, get_xmind_testcase_list, case_to_db, get_recent_records, \
     get_case_from_db, handle_upload, mk_upload_dir, read_json, write_json
 from ApiManager.utils.excelfile import xmind2xlsx
@@ -903,17 +904,6 @@ def delete_record(request):
             print(e)
 
         records_list = get_recent_records()
-        # print(records_list)
-        # paginator = Paginator(records_list, 10)
-        # page = request.GET.get('page')
-        # try:
-        #     records = paginator.page(page)
-        # except PageNotAnInteger:
-        #     records = paginator.page(1)
-        # except EmptyPage:
-        #     records = paginator.page(paginator.num_pages)
-        # print(records)
-        # return render_to_response('xmind2testcase.html', {"records": records})
         return HttpResponse(records_list)
 
 
@@ -928,49 +918,29 @@ def status_send(request):
         url = e['base_url']
         des = e['simple_desc']
         env.append({"name": name, "url": url, "des": des})
-    device_type = []
-    model = json.loads(read_json(user))
-    id_mapping = model['ID_MAPPING']
-    for device in id_mapping:
-        device_type.append(device)
+
     if request.is_ajax():
-        data = json.loads(request.body.decode('utf-8'))
-        devices = data['devices']
-        fe_env = {"url": json.loads(data['fe_env'].replace(r'"', r'\"').replace('\'', '"'))['url'],
-                  "token": json.loads(data['fe_env'].replace(r'"', r'\"').replace('\'', '"'))['des']}
-        gateway_env = {"url": json.loads(data['gateway'].replace(r'"', r'\"').replace('\'', '"'))['url']}
-        isopen = data['isopen']
-        result = status_generate(devices, fe_env, gateway_env, id_mapping, isopen)
-        print(result)
+        resp = json.loads(request.body.decode('utf-8'))
+        print(resp)
+        env_fe = json.loads(resp['fe'].replace(r'"', r'\"').replace('\'', '"'))
+        env_fe['token'] = env_fe['des']
+        env_gateway = json.loads(resp['gateway'].replace(r'"', r'\"').replace('\'', '"'))
+        env_screen = json.loads(resp['screen'].replace(r'"', r'\"').replace('\'', '"'))
+
+        env = {
+            "fe": env_fe,
+            "gateway": env_gateway,
+            "screen": env_screen
+        }
+        data = json.loads(read_json(user))
+        model = model_set(data, env)
+        id_mapping = model['ID_MAPPING']
+
+        device_type = model['device_types']
+        result = status_generate(device_type, env['fe'], env['gateway'], id_mapping, 'close')
+
         return HttpResponse(json.dumps(result, sort_keys=True, indent=4, separators=(',', ':')))
     else:
-        return render_to_response('data_page.html', {"env": env, "devices": device_type})
+        return render_to_response('data_page.html', {"env": env})
 
-
-@login_check
-def set_data(request):
-    user = request.session["now_account"]
-    if request.is_ajax():
-        data = json.loads(request.body.decode('utf-8'))
-        device_type = data['deviceType']
-        id_channel = json.loads(data['id'])
-        open_data = json.loads(data['open'])
-        close_data = json.loads(data['close'])
-
-        model = json.loads(read_json(user))
-        model['ID_MAPPING'][device_type]['id_channel'].append(id_channel)
-        model['ID_MAPPING'][device_type]['open'] = open_data
-        model['ID_MAPPING'][device_type]['close'] = close_data
-        write_json(user, model)
-        return HttpResponse('success')
-
-
-def show_data(request):
-    user = request.session["now_account"]
-    if request.is_ajax():
-        data = json.loads(request.body.decode('utf-8'))
-        model = json.loads(read_json(user))
-        result = json.dumps(model['ID_MAPPING'][data], sort_keys=True, indent=4, separators=(',', ':'))
-        return HttpResponse(result)
-
-# TODO 1. set rules points device opendata closedata 2. check if set data 3. modify set data
+# TODO 1. open & close 2. check rule

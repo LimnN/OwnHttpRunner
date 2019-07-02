@@ -103,7 +103,6 @@ def area_lua_generate():
 def status_generate(devices, fe_env, gateway_env, id_mapping, isopen='close'):
     # for status data generate
     # StuffGeolocating VehicleGeolocating ParkingLotSystem CameraPeopleCountingSystem
-    # ID_MAPPING = read_json(user)
     success = 0
     fail = 0
     detail = []
@@ -117,7 +116,6 @@ def status_generate(devices, fe_env, gateway_env, id_mapping, isopen='close'):
         device_type = device
 
         ids = id_mapping[device_type]['id_channel']
-
         if len(ids) == 0:
             fail += 1
             detail.append({device_type: 'data not set yet'})
@@ -125,15 +123,6 @@ def status_generate(devices, fe_env, gateway_env, id_mapping, isopen='close'):
             try:
                 for id_channel in ids:
                     device_id = id_channel['id']
-
-                    # try:
-                    #     device_id = id_mapping[device_type]['id_channel'][0]['id']
-                    # except IndexError as e:
-                    #     fail += 1
-                    #     detail.append({device_type: 'data not set yet'})
-                    #     print(e)
-                    #     continue
-
                     data = id_mapping[device_type][isopen]
                     body = {
                         "deviceType": device_type,
