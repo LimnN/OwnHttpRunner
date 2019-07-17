@@ -2,6 +2,7 @@ import base64
 import json
 import time
 import requests
+import random
 
 
 def get_metadata(env, message_class):
@@ -53,9 +54,9 @@ def get_imagedata(isarray):
     """
     if isarray:
         with open('../../ExampleFile/a.png', 'rb') as f:
-            image_base64 = base64.b64encode(f.read())
+            image_base64 = base64.b64encode(f.read()).decode('ascii')
         with open('../../ExampleFile/b.png', 'rb') as f:
-            image2_base64 = base64.b64encode(f.read())
+            image2_base64 = base64.b64encode(f.read()).decode('ascii')
         image_data = [
             {
                 "blob": image_base64,
@@ -68,7 +69,7 @@ def get_imagedata(isarray):
         ]
     else:
         with open('../../ExampleFile/a.png', 'rb') as f:
-            image_base64 = base64.b64encode(f.read())
+            image_base64 = base64.b64encode(f.read()).decode('ascii')
         image_data = {
             "blob": image_base64,
             "contentType": "image/png"
@@ -100,7 +101,7 @@ def area_lua_generate():
     pass
 
 
-def status_generate(devices, fe_env, gateway_env, id_mapping, isopen='close'):
+def event_generate(devices, fe_env, gateway_env, id_mapping, isopen='close'):
     # for status data generate
     # StuffGeolocating VehicleGeolocating ParkingLotSystem CameraPeopleCountingSystem
     success = 0
@@ -146,3 +147,160 @@ def status_generate(devices, fe_env, gateway_env, id_mapping, isopen='close'):
                 detail.append({device_type: 'data set wrong'})
                 print(e)
     return {"success": success, "fail": fail, "detail": detail}
+
+
+def status_generate(devices, fe_env, gateway_env, num=20, istoday='today'):
+    """
+    CameraPeopleCounting StuffGeoLocating Saige ParkingLotSystem
+    :return:
+    """
+    if istoday == 'today':
+        winsize = 120
+    else:
+        winsize = 86400
+    for device_type in devices:
+        device_info = get_device(fe_env, device_type, num)
+        for device in device_info:
+            if device_type == 'CameraPeopleCountingSystem':
+                device_id = device['id']
+                device_channel = 'newlan'
+                if device['type'] == 'CameraPeopleCountingSystem':
+                    data = {
+                        "num_enter": random.randrange(20, 300),
+                        "num_leave": random.randrange(20, 300),
+                        "num_stay": random.randrange(20, 300),
+                        "image_data": get_imagedata(False)
+                    }
+                else:
+                    data = {
+                        "num_enter": random.randrange(20, 300),
+                        "num_leave": random.randrange(20, 300),
+                        "num_stay": random.randrange(20, 300),
+                    }
+                body = {
+                    "deviceType": device['type'],
+                    "deviceID": device_id,
+                    "timestamp": int(time.time()) - winsize,
+                    "data": data
+                }
+                token = get_token(gateway_env, device_channel, fe_env)
+                send_status(gateway_env, token, body)
+            elif device_type == 'StuffGeolocating':
+                device_id = device['id']
+                device_channel = 'shcg'
+                data = {
+                    "name": device['name'],
+                    "work_status": random.choice([True, False]),
+                    "working_hours": random.randrange(1, 8),
+                    "longitude": random.uniform(121.441891, 121.478499),
+                    "latitude": random.uniform(31.211491, 31.311483)
+                }
+                body = {
+                    "deviceType": device['type'],
+                    "deviceID": device_id,
+                    "timestamp": int(time.time()) - winsize,
+                    "data": data
+                }
+                token = get_token(gateway_env, device_channel, fe_env)
+                send_status(gateway_env, token, body)
+            elif device_type == 'VehicleGeolocating':
+                device_id = device['id']
+                if device['channel'] != 'saige':
+                    continue
+                device_channel = 'saige'
+                data = {
+                    "carNum": device['CarNum'],
+                    "course": random.randrange(0, 200),
+                    "mile": random.randrange(300, 2000),
+                    "speed": random.uniform(0, 80),
+                    "work_status": random.choice([True, False]),
+                    "working_hours": random.randrange(1, 8),
+                    "longitude": random.uniform(121.441891, 121.478499),
+                    "latitude": random.uniform(31.211491, 31.311483)
+                }
+                body = {
+                    "deviceType": device['type'],
+                    "deviceID": device_id,
+                    "timestamp": int(time.time()) - winsize,
+                    "data": data
+                }
+                token = get_token(gateway_env, device_channel, fe_env)
+                send_status(gateway_env, token, body)
+            elif device_type == 'ParkingLotSystem':
+                device_id = device['id']
+                device_channel = 'lmding'
+                data = {
+                    "num_guest_park_free": random.randrange(0, 500),
+                    "num_monthly_park_free": random.randrange(0, 500),
+                    "num_park_free": random.randrange(0, 500)
+                }
+                body = {
+                    "deviceType": device['type'],
+                    "deviceID": device_id,
+                    "timestamp": int(time.time()) - winsize,
+                    "data": data
+                }
+                token = get_token(gateway_env, device_channel, fe_env)
+                send_status(gateway_env, token, body)
+
+
+def get_device(fe_env, device_type, num):
+    url = fe_env['url'] + '/ciimc-fe-api/meta/subscribe-change'
+    filters = {}
+    # 1. CameraPeopleCounting
+    if device_type == 'CameraPeopleCountingSystem':
+        filters = {
+            "device": {
+                "channel": "newlan"
+            }
+        }
+
+    elif device_type == 'StuffGeolocating':
+        filters = {
+            "device": {
+                "channel": "shcg"
+            }
+        }
+    elif device_type == 'VehicleGeolocating':
+        filters = {
+            "device": {
+                "channel": "saige",
+                "deviceType": "VehicleGeolocating"
+            }
+        }
+    elif device_type == 'ParkingLotSystem':
+        filters = {
+            "device": {
+                "channel": "lmding"
+            }
+        }
+    params = {
+        "token": fe_env['token'],
+        "message_class": 'device',
+        "filters": json.dumps(filters)
+    }
+    with requests.get(url=url, params=params, stream=True, verify=False) as response:
+        devices = []
+        for chunk in response.iter_lines(chunk_size=1):
+            chunk = chunk.decode('utf-8')
+            if chunk:
+                if chunk == 'change':
+                    break
+                else:
+                    meta = json.loads(chunk)
+                    if meta['record']['exists']:
+                        devices.append(meta['record'])
+    ids = []
+    for device in devices:
+        print(device)
+        try:
+            if device_type == 'StuffGeolocating':
+                ids.append({"id": device['deviceID'], "type": device['deviceType'], "name": device['data']['name']})
+            elif device_type == 'VehicleGeolocating':
+                ids.append({"id": device['deviceID'], "type": device['deviceType'], "channel": device['channel'],
+                            "CarNum": device['data']['carNum']})
+            else:
+                ids.append({"id": device['deviceID'], "type": device['deviceType']})
+        except KeyError:
+            continue
+    return ids[:num]

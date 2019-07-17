@@ -28,8 +28,8 @@ from ApiManager.utils.runner import run_by_batch, run_test_by_type
 from ApiManager.utils.task_opt import delete_task, change_task_status
 from ApiManager.utils.testcase import get_time_stamp
 from httprunner import HttpRunner
-from ApiManager.generate.generator import status_generate
-from ApiManager.generate.prepare import model_set
+from ApiManager.generate.generator import event_generate
+from ApiManager.generate.prepare import model_set, disable_rule
 from ApiManager.utils.utils import get_xmind_testsuites, get_xmind_testcase_list, case_to_db, get_recent_records, \
     get_case_from_db, handle_upload, mk_upload_dir, read_json, write_json
 from ApiManager.utils.excelfile import xmind2xlsx
@@ -855,7 +855,8 @@ def generate_testcase(request):
 @login_check
 def file_download(request, name):
     upload_folder = mk_upload_dir()
-    file = upload_folder + '\\' + name
+    # file = upload_folder + '\\' + name
+    file = os.path.join(upload_folder, name)
 
     def file_iterator(filename, chunk_size=128):
         with open(filename, 'rb') as destination:
@@ -879,7 +880,8 @@ def record_view(request, name):
         'account': account
     }
     upload_folder = mk_upload_dir()
-    file = upload_folder + '\\' + name
+    # file = upload_folder + '\\' + name
+    file = os.path.join(upload_folder, name)
     test_cases = get_case_from_db(file)
     suites = []
     for case in test_cases:
@@ -895,7 +897,7 @@ def delete_record(request):
     if request.is_ajax():
         upload_folder = mk_upload_dir()
         name = json.loads(request.body.decode('utf-8'))
-        file = upload_folder + '\\' + name
+        file = os.path.join(upload_folder, name)
         XmindCase.objects.filter(xmind_file=file).delete()
         try:
             os.remove(file)
@@ -922,25 +924,35 @@ def status_send(request):
     if request.is_ajax():
         resp = json.loads(request.body.decode('utf-8'))
         print(resp)
-        env_fe = json.loads(resp['fe'].replace(r'"', r'\"').replace('\'', '"'))
-        env_fe['token'] = env_fe['des']
-        env_gateway = json.loads(resp['gateway'].replace(r'"', r'\"').replace('\'', '"'))
-        env_screen = json.loads(resp['screen'].replace(r'"', r'\"').replace('\'', '"'))
+        if resp['action'] == 'execute':
+            env_fe = json.loads(resp['fe'].replace(r'"', r'\"').replace('\'', '"'))
+            env_fe['token'] = env_fe['des']
+            env_gateway = json.loads(resp['gateway'].replace(r'"', r'\"').replace('\'', '"'))
+            env_screen = json.loads(resp['screen'].replace(r'"', r'\"').replace('\'', '"'))
+            isopen = resp['isopen']
 
-        env = {
-            "fe": env_fe,
-            "gateway": env_gateway,
-            "screen": env_screen
-        }
-        data = json.loads(read_json(user))
-        model = model_set(data, env)
-        id_mapping = model['ID_MAPPING']
+            env = {
+                "fe": env_fe,
+                "gateway": env_gateway,
+                "screen": env_screen
+            }
+            data = json.loads(read_json(user))
+            model = model_set(data, env)
+            id_mapping = model['ID_MAPPING']
 
-        device_type = model['device_types']
-        result = status_generate(device_type, env['fe'], env['gateway'], id_mapping, 'close')
+            device_type = model['device_types']
+            result = event_generate(device_type, env['fe'], env['gateway'], id_mapping, isopen)
 
-        return HttpResponse(json.dumps(result, sort_keys=True, indent=4, separators=(',', ':')))
+            return HttpResponse(json.dumps(result, sort_keys=True, indent=4, separators=(',', ':')))
+        elif resp['action'] == 'rule_disable':
+            env_screen = json.loads(resp['screen'].replace(r'"', r'\"').replace('\'', '"'))
+
+            data = json.loads(read_json(user))
+            result = disable_rule(env_screen, data)
+            print("*******result******")
+            print(result)
+            return HttpResponse(json.dumps(result, sort_keys=True, indent=4, separators=(',', ':'), ensure_ascii=False))
     else:
         return render_to_response('data_page.html', {"env": env})
 
-# TODO 1. open & close 2. check rule
+# TODO 1. open & close 2. check rule 3. tips

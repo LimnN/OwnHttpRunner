@@ -59,11 +59,10 @@ def create_rule(screen_env, rule):
     :return:
     """
     check = check_exist('rule', rule, screen_env)
-    if check == 'Exist':
+    if check == rule:
         print('Rule Already Exists')
-        return 'Rule Already Exists'
+        return rule
     elif check is None:
-        # screen_env = {"url": "http://10.101.12.4:17999"}
         url = screen_env['url'] + '/united-ciimc-api/v1/area-rule/create'
 
         rule = rule
@@ -78,11 +77,10 @@ def create_rule(screen_env, rule):
 
 def create_point(fe_env, point):
     check = check_exist('point', point, fe_env)
-    if check == 'Exist':
+    if check == point:
         print('Point Already Exists')
-        return 'Point Already Exists'
+        return point
     elif check is None:
-        # fe_env = {"url": "https://10.101.12.4:17998", "token": "063f2acb8048a8af15074f0387aeda1b"}
         url = fe_env['url'] + '/ciimc-fe-api/area/create'
         params = {
             "token": fe_env['token']
@@ -110,11 +108,10 @@ def create_point(fe_env, point):
 
 def create_device(fe_env, device, point):
     check = check_exist('device', device, fe_env)
-    if check == 'Exist':
+    if check == device:
         print('Device Already Exists')
-        return 'Device Already Exists'
+        return device
     elif check is None:
-        # fe_env = {"url": "https://10.101.12.4:17998", "token": "063f2acb8048a8af15074f0387aeda1b"}
         url = fe_env['url'] + '/ciimc-fe-api/device/register'
         params = {
             "token": fe_env['token']
@@ -137,12 +134,11 @@ def create_device(fe_env, device, point):
 
         response = requests.request("POST", url, data=payload, params=params, verify=False, headers=headers)
         print("***********device create********")
-        print(device)
         print(response.json())
         return response.json()
 
 
-def delete_rule():
+def delete_rule(env, data):
     pass
 
 
@@ -164,15 +160,13 @@ def check_exist(metatype, data, env):
         for device
     :return:
     """
-    print("*******check env************8")
-    print(env)
     if metatype == 'rule':
         url = env['url'] + "/united-ciimc-api/v1/area-rule/list"
         response = requests.request("POST", url)
         rules = response.json()
         for rule in rules['data']:
             if rule['name'] == data['name'] and rule['smartRule'] == data['smartRule']:
-                return 'Exist'
+                return data
             else:
                 continue
         return None
@@ -190,10 +184,10 @@ def check_exist(metatype, data, env):
             for area in response['areas']:
                 if area['name'] == data['name'] and area['address'] == data['address'] \
                         and area['parentID'] == data['parentID']:
-                    return 'Exist'
+                    return data
                 else:
                     continue
-            return 'Exist'
+            return None
     elif metatype == 'device':
         url = env['url'] + '/ciimc-fe-api/meta/subscribe-change'
         filters = {
@@ -229,7 +223,6 @@ def check_exist(metatype, data, env):
 
 
 def disable_rule(screen_env, data):
-    # screen_env = {"url": "http://10.101.12.4:17999"}
     url = screen_env['url'] + "/united-ciimc-api/v1/area-rule/list"
 
     response = requests.request("POST", url)
@@ -238,8 +231,14 @@ def disable_rule(screen_env, data):
     for t in data['rules']:
         rule_json = t['rule_json']
         our_rule.append(rule_json['name'])
+    result = {
+        "success": [],
+        "fail": []
+    }
     for rule in rules['data']:
-        if rule['name'] not in our_rule:
+        if rule['type'] == 'lua':
+            continue
+        elif rule['name'] not in our_rule:
             rule['enabled'] = False
             url = screen_env['url'] + "/united-ciimc-api/v1/area-rule/save"
             params = {
@@ -247,12 +246,13 @@ def disable_rule(screen_env, data):
             }
             response = requests.request("POST", url, params=params)
             print(response.json())
+            if response.json()['result'] == 'success':
+                result['success'].append(str(response.json()['data']['id']) + '--' + response.json()['data']['name'])
+            else:
+                result['fail'].append(response.json())
         elif rule['name'] in our_rule:
             continue
-
-
-def creator():
-    pass
+    return result
 
 
 def model_set(data, env):

@@ -13,9 +13,9 @@
             <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
                 <thead>
                     <tr class="am-success">
-                        <th>fe-api</th>
-                        <th>gateway-api</th>
-                        <th>screen-api</th>
+                        <th>FE-API</th>
+                        <th>Gateway-API</th>
+                        <th>Screen-API</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -67,7 +67,13 @@
                 <li>
                     <button type="button" class="am-btn am-btn-primary am-round am-btn-lg"
                         data-am-popover="{content: '开始发送状态数据', trigger: 'hover focus'}" style="width: 250px"
-                        onclick="execute()">Execute</button>
+                        onclick="execute('open')">Execute Open</button>
+
+                </li>
+                <li>
+                    <button type="button" class="am-btn am-btn-primary am-round am-btn-lg"
+                        data-am-popover="{content: '开始发送状态数据', trigger: 'hover focus'}" style="width: 250px"
+                        onclick="execute('close')">Execute Close</button>
 
                 </li>
 
@@ -87,8 +93,6 @@
                 <button type="button" class="btn btn-primary" disabled>执行详情</button>
                 <pre><code class="language-json" id="detail-data"></code></pre>
             </div>
-
-
         </form>
     </div>
 
@@ -115,21 +119,50 @@
 <script type="text/javascript">
 
     function disable_rule() {
-
-
-    }
-
-    function execute() {
         var fe = $('.selectpicker.fe_env').val()
         var gateway = $('.selectpicker.gateway_env').val()
         var screen = $('.selectpicker.screen_env').val()
-        console.log(fe)
+        processAlert()
+        var data = {
+            "action": "rule_disable",
+            "fe": fe,
+            "gateway": gateway,
+            "screen": screen,
+        }
+        $.ajax(
+            {
+                type: 'post',
+                url: '/api/status_send/',
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                success: function (result) {
+                    $('#process-alert_print').get(0).className = 'progress-bar progress-bar-success'
+                    var json = JSON.parse(result)
+                    document.getElementById('detail').style.display = 'block'
+                    $('#detail-data').text(result)
+                    Prism.highlightAll()
+                    $('#process-alert_print').text('rule disable情况如下')
+                },
+                error: function () {
+                    $('.am-modal-btn').click()
+                    myAlert('error')
+                }
+            }
+        )
+
+    }
+
+    function execute(action) {
+        var fe = $('.selectpicker.fe_env').val()
+        var gateway = $('.selectpicker.gateway_env').val()
+        var screen = $('.selectpicker.screen_env').val()
         processAlert()
         var data = {
             "action": "execute",
             "fe": fe,
             "gateway": gateway,
-            "screen": screen
+            "screen": screen,
+            "isopen": action
         }
         $.ajax(
             {
@@ -144,8 +177,7 @@
                     document.getElementById('detail').style.display = 'block'
                     $('#detail-data').text(result)
                     Prism.highlightAll()
-                    $('#process-alert_print').text('success' + json.success + ' fail' + json.fail)
-                    console.log(result)
+                    $('#process-alert_print').text('success: ' + json.success + ' fail: ' + json.fail)
                 },
                 error: function () {
                     $('.am-modal-btn').click()

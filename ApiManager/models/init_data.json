@@ -2,102 +2,6 @@
     "rules": [
         {
             "rule_json": {
-                "name": "TEST-LinFen-xxxxxxx-临汾路街道独居养老服务",
-                "type": "smart",
-                "enabled": 1,
-                "smartRule": {
-                    "eventLevel": "较大事件",
-                    "description": "烟雾浓度异常报警",
-                    "eventType": [
-                        "公共安全",
-                        "消防安全",
-                        "环境安全",
-                        "烟雾异常"
-                    ],
-                    "eventScene": "无线烟感温感",
-                    "targetParentAreaID": 2,
-                    "occurDateRanges": [
-                        {
-                            "endSecondsOfDay": 86400,
-                            "beginSecondsOfDay": 0
-                        }
-                    ],
-                    "targetParentAreaCategory": "街道",
-                    "triggerConditions": [
-                        {
-                            "matchMode": "Equal",
-                            "value": "true",
-                            "genericPropertyName": "smoke_status",
-                            "numDevices": 1,
-                            "deviceType": "SmokeDetectionSensor",
-                            "secondsLasts": "0"
-                        }
-                    ],
-                    "triggerLogicAnd": false
-                }
-            },
-            "point": {
-                "id": 0,
-                "name": "TEST-LinFen-xxxxxx",
-                "address": "TEST-临汾路xxxxxx",
-                "category": "点位",
-                "sponsors": [],
-                "data": {
-                    "area_district": {
-                        "areaID": 39,
-                        "areaCategory": "区",
-                        "areaName": "静安区"
-                    },
-                    "PTsence": "无线烟感温感",
-                    "town": {
-                        "areaID": 2,
-                        "areaCategory": "街道",
-                        "areaName": "临汾路街道"
-                    },
-                    "location": {
-                        "latitude": 31.3158343049,
-                        "system": "wgs84",
-                        "longitude": 121.456574201
-                    }
-                },
-                "parentID": 2
-            },
-            "device": {
-                "deviceID": "TEST-LinFen-Devicexxxxx",
-                "deviceType": "SmokeDetectionSensor",
-                "channel": "sii",
-                "data": {
-                    "address": "TEST-临汾路测试设备地址xxxxx",
-                    "town": "临汾路街道",
-                    "vendor": "联数物联",
-                    "district": "静安区",
-                    "isVirtual": false,
-                    "isSensor": true,
-                    "setup_time": 1522339200,
-                    "location": {
-                        "latitude": 31.3158343049,
-                        "system": "wgs84",
-                        "longitude": 121.456574201
-                    },
-                    "PTscene": "无线烟感温感",
-                    "area_district": "静安区"
-                }
-            },
-            "open_data": {
-                "battery": 100,
-                "smoke_status": true,
-                "signal": 35,
-                "smoke": 100
-            },
-            "close_data": {
-                "battery": 100,
-                "smoke_status": false,
-                "signal": 35,
-                "smoke": 0
-            }
-        },
-        {
-            "rule_json": {
                 "name": "TEST-LinFen-Rule1-临汾路街道独居养老服务-居户门磁警报",
                 "type": "smart",
                 "enabled": 1,
@@ -141,7 +45,7 @@
                         "areaCategory": "区",
                         "areaName": "静安区"
                     },
-                    "PTsence": "独居养老服务",
+                    "PTscene": "独居养老服务",
                     "town": {
                         "areaID": 2,
                         "areaCategory": "街道",
@@ -237,7 +141,7 @@
                         "areaCategory": "区",
                         "areaName": "静安区"
                     },
-                    "PTsence": "独居养老服务",
+                    "PTscene": "独居养老服务",
                     "town": {
                         "areaID": 2,
                         "areaCategory": "街道",
@@ -343,7 +247,7 @@
                         "areaCategory": "区",
                         "areaName": "静安区"
                     },
-                    "PTsence": "垃圾满溢监测",
+                    "PTscene": "垃圾满溢监测",
                     "town": {
                         "areaID": 1,
                         "areaCategory": "街道",
@@ -443,7 +347,7 @@
                         "areaCategory": "区",
                         "areaName": "静安区"
                     },
-                    "PTsence": "垃圾满溢监测",
+                    "PTscene": "垃圾满溢监测",
                     "town": {
                         "areaID": 1,
                         "areaCategory": "街道",
@@ -550,7 +454,7 @@
                         "areaCategory": "区",
                         "areaName": "静安区"
                     },
-                    "PTsence": "智能井盖",
+                    "PTscene": "智能井盖",
                     "town": {
                         "areaID": 1,
                         "areaCategory": "街道",
@@ -666,7 +570,7 @@
                         "areaCategory": "区",
                         "areaName": "静安区"
                     },
-                    "PTsence": "智能井盖",
+                    "PTscene": "智能井盖",
                     "town": {
                         "areaID": 2,
                         "areaCategory": "街道",

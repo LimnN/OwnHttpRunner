@@ -191,6 +191,7 @@ def get_recent_records():
         timequery = XmindCase.objects.filter(xmind_file=file['xmind_file']).values('create_time')[:1]
         filetime = list(timequery)[0]['create_time'].strftime("%Y-%m-%d %H:%M:%S")
         filequery = XmindCase.objects.filter(xmind_file=file['xmind_file']).values('xlsx_file', 'xmind_file').distinct()
+        # TODO 可能有bug
         xmindfile = filequery[0]['xmind_file'].split('\\')[-1]
         xlsx = filequery[0]['xlsx_file'].split('\\')[-1]
         records.append({"name": xmindfile, "time": filetime, "xmind_file": xmindfile, "xlsx_file": xlsx})
@@ -226,7 +227,7 @@ def get_case_from_db(file):
 
 def mk_upload_dir():
     here = os.path.abspath(os.path.dirname(__file__))
-    upload_folder = os.path.join(here, '..\\uploads')
+    upload_folder = os.path.join(os.path.abspath(os.path.join(here, "..")), 'uploads')
     if not exists(upload_folder):
         os.mkdir(upload_folder)
     return upload_folder
@@ -234,7 +235,7 @@ def mk_upload_dir():
 
 def mk_model_dir():
     here = os.path.abspath(os.path.dirname(__file__))
-    model_folder = os.path.join(here, '..\\models')
+    model_folder = os.path.join(os.path.abspath(os.path.join(here, "..")), 'models')
     if not exists(model_folder):
         os.mkdir(model_folder)
     return model_folder
@@ -242,8 +243,10 @@ def mk_model_dir():
 
 def read_json(user):
     folder = mk_model_dir()
-    init = folder + '\\' + 'init_data.json'
-    file = folder + '\\' + user + '.json'
+    # init = folder + '\\' + 'init_data.json'
+    init = os.path.join(folder, 'init_data.json')
+    filename = user + '.json'
+    file = os.path.join(folder, filename)
     if not os.path.isfile(file) or not os.path.getsize(file):
         shutil.copyfile(init, file)
         with open(file, encoding='utf-8') as data:
@@ -256,6 +259,7 @@ def read_json(user):
 
 def write_json(user, data):
     folder = mk_model_dir()
-    file = folder + '\\' + user + '.json'
+    filename = user + '.json'
+    file = os.path.join(folder, filename)
     with open(file, 'w') as f:
         f.write(json.dumps(data, sort_keys=True, indent=4, separators=(',', ':')))
