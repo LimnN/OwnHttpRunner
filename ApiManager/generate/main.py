@@ -9,14 +9,15 @@ from ApiManager.generate.prepare import disable_rule, create_rule, create_point,
 
 def event_prepare():
     here = os.path.abspath(os.path.dirname(__file__))
-    file = here + '\\init_data.json'
-    with open(file, encoding='utf-8') as data:
-        source = data.read()
-    data = json.loads(source)
+    # file = here + '\\init_data.json'
+    file = os.path.join(here, 'init_data.json')
+    with open(file, encoding='utf-8') as data_t:
+        source = data_t.read()
+    data_t = json.loads(source)
     # disable_rule(screen_env=env_screen, data=data)
-    ID_MAPPING = {}
-    devices = set()
-    for t in data['rules']:
+    id_mapping = {}
+    devices_t = set()
+    for t in data_t['rules']:
         rule = t['rule_json']
         point = t['point']
         device = t['device']
@@ -24,21 +25,21 @@ def event_prepare():
         close_data = t['close_data']
 
         try:
-            ID_MAPPING[device['deviceType']]
+            id_mapping[device['deviceType']]
         except KeyError:
-            ID_MAPPING[device['deviceType']] = {
+            id_mapping[device['deviceType']] = {
                 "close": close_data,
                 "id_channel": [],
                 "open": open_data
             }
 
-        ID_MAPPING[device['deviceType']]['id_channel'].append(
+        id_mapping[device['deviceType']]['id_channel'].append(
             {
                 "id": device['deviceID'],
                 "channel": device['channel']
             }
         )
-        devices.add(device['deviceType'])
+        devices_t.add(device['deviceType'])
 
         create_rule(env_screen, rule)
         point_name = create_point(env_fe, point)
@@ -46,7 +47,7 @@ def event_prepare():
         create_device(env_fe, device, point_name)
 
     # disable_rule(env_screen)
-    return {"device": devices, "mapping": ID_MAPPING}
+    return {"device": devices_t, "mapping": id_mapping}
 
 
 if __name__ == '__main__':
@@ -61,19 +62,17 @@ if __name__ == '__main__':
         "screen": env_screen
     }
 
-    # data = event_prepare()
-    # ID_MAPPING = data['mapping']
-    # devices = data['device']
-    # print("***************XXXXXXXXXXX****************")
-    # print(ID_MAPPING)
-    # print(devices)
-    # event_generate(devices, env_fe, env_gateway, ID_MAPPING, 'open')
+    data = event_prepare()
+    ID_MAPPING = data['mapping']
+    devices = data['device']
+    print("***************XXXIX****************")
+    print(ID_MAPPING)
+    print(devices)
+    event_generate(devices, env_fe, env_gateway, ID_MAPPING, 'close')
     # TODO 造在线率
 
-    # print(get_imagedata(False))
-    # print(type(get_imagedata(False)))
     # d = ['ParkingLotSystem', 'CameraPeopleCountingSystem', 'StuffGeolocating', 'VehicleGeolocating']
-    status_generate(['StuffGeolocating'], env_fe, env_gateway, num=10)
+    # status_generate(['StuffGeolocating'], env_fe, env_gateway, num=20)
 
     # 元数据
     # https://10.101.12.4:19916/ciimc-fe-api/meta/subscribe-change?message_class=generic-property&token=e1550202429f43c7bf71043868712642

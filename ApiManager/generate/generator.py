@@ -90,6 +90,9 @@ def send_status(env, token, body):
     }
 
     response = requests.request("POST", url, data=payload, headers=headers, params=querystring, verify=False)
+    print("*******************")
+    print(token)
+    print(json.dumps(body, sort_keys=True, indent=4, separators=(',', ':'), ensure_ascii=False))
     print(payload)
     print(response.json())
     return response.json()
@@ -135,7 +138,6 @@ def event_generate(devices, fe_env, gateway_env, id_mapping, isopen='close'):
                     # device_channel = id_mapping[device_type]['id_channel'][0]['channel']
                     device_channel = id_channel['channel']
                     token = get_token(gateway_env, device_channel, fe_env)
-
                     result = send_status(gateway_env, token, body)
                     if result['result'] == 'success':
                         success += 1
