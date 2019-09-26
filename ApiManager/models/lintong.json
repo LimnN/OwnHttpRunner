@@ -1,0 +1,636 @@
+{
+    "rules": [
+        {
+            "rule_json": {
+                "name": "TEST-LinFen-Rule1-临汾路街道独居养老服务-居户门磁警报",
+                "type": "smart",
+                "enabled": 1,
+                "smartRule": {
+                    "eventType": [
+                        "公共服务",
+                        "社区养老"
+                    ],
+                    "eventLevel": "一般事件",
+                    "targetParentAreaID": 2,
+                    "targetParentAreaCategory": "小区",
+                    "description": "临汾路测试规则1-PTscene独居养老服务-居户门磁警报",
+                    "occurDateRanges": [
+                        {
+                            "beginSecondsOfDay": 0,
+                            "endSecondsOfDay": 86400
+                        }
+                    ],
+                    "triggerConditions": [
+                        {
+                            "numDevices": 1,
+                            "deviceType": "RegisterDoorSensor",
+                            "genericPropertyName": "door_status",
+                            "matchMode": "Equal",
+                            "value": "true",
+                            "secondsLasts": 10
+                        }
+                    ],
+                    "triggerLogicAnd": 0
+                }
+            },
+            "point": {
+                "id": 0,
+                "name": "TEST-LinFen-Point-Rule1",
+                "address": "TEST-临汾路测试点位地址001",
+                "category": "点位",
+                "sponsors": [],
+                "data": {
+                    "area_district": {
+                        "areaID": 39,
+                        "areaCategory": "区",
+                        "areaName": "静安区"
+                    },
+                    "PTscene": "独居养老服务",
+                    "town": {
+                        "areaID": 2,
+                        "areaCategory": "街道",
+                        "areaName": "临汾路街道"
+                    },
+                    "location": {
+                        "latitude": 31.3158343049,
+                        "system": "wgs84",
+                        "longitude": 121.456574201
+                    }
+                },
+                "parentID": 64
+            },
+            "device": {
+                "deviceID": "TEST-LinFen-DeviceID001",
+                "deviceType": "RegisterDoorSensor",
+                "channel": "sii",
+                "data": {
+                    "address": "TEST-临汾路测试设备地址001",
+                    "town": "临汾路街道",
+                    "vendor": "联数物联",
+                    "district": "静安区",
+                    "isVirtual": false,
+                    "isSensor": true,
+                    "setup_time": 1522339200,
+                    "location": {
+                        "latitude": 31.3158343049,
+                        "system": "wgs84",
+                        "longitude": 121.456574201
+                    },
+                    "PTscene": "独居养老服务",
+                    "area_district": "静安区"
+                }
+            },
+            "open_data": {
+                "door_status": true
+            },
+            "close_data": {
+                "door_status": false
+            },
+            "tags": [
+                "临汾路街道",
+                "一般事件",
+                [
+                    "公共服务",
+                    "社区养老"
+                ],
+                "独居养老服务"
+            ]
+        },
+        {
+            "rule_json": {
+                "name": "TEST-LinFen-Rule2-临汾路街道独居养老服务-老人五件套",
+                "type": "smart",
+                "enabled": 1,
+                "smartRule": {
+                    "eventType": [
+                        "公共服务",
+                        "医疗服务"
+                    ],
+                    "eventLevel": "较大事件",
+                    "targetParentAreaID": 2,
+                    "targetParentAreaCategory": "小区",
+                    "description": "临汾路测试规则2-PTscene独居养老服务-老人五件套",
+                    "occurDateRanges": [
+                        {
+                            "beginSecondsOfDay": 0,
+                            "endSecondsOfDay": 86400
+                        }
+                    ],
+                    "triggerConditions": [
+                        {
+                            "numDevices": 1,
+                            "deviceType": "OldManCareKit",
+                            "genericPropertyName": "heartbeat",
+                            "matchMode": "LessThan",
+                            "value": "50",
+                            "secondsLasts": 10
+                        }
+                    ],
+                    "triggerLogicAnd": 0
+                }
+            },
+            "point": {
+                "id": 0,
+                "name": "TEST-LinFen-Point-Rule2",
+                "address": "TEST-临汾路测试点位地址002",
+                "category": "点位",
+                "sponsors": [],
+                "data": {
+                    "area_district": {
+                        "areaID": 39,
+                        "areaCategory": "区",
+                        "areaName": "静安区"
+                    },
+                    "PTscene": "独居养老服务",
+                    "town": {
+                        "areaID": 2,
+                        "areaCategory": "街道",
+                        "areaName": "临汾路街道"
+                    },
+                    "location": {
+                        "latitude": 31.3120280635,
+                        "system": "wgs84",
+                        "longitude": 121.454690099
+                    }
+                },
+                "parentID": 51
+            },
+            "device": {
+                "deviceID": "TEST-LinFen-DeviceID002",
+                "deviceType": "OldManCareKit",
+                "channel": "sii",
+                "data": {
+                    "address": "TEST-临汾路测试设备地址002",
+                    "town": "临汾路街道",
+                    "vendor": "联数物联",
+                    "district": "静安区",
+                    "isVirtual": false,
+                    "isSensor": true,
+                    "setup_time": 1522339200,
+                    "location": {
+                        "latitude": 31.3120280635,
+                        "system": "wgs84",
+                        "longitude": 121.454690099
+                    },
+                    "PTscene": "独居养老服务",
+                    "area_district": "静安区"
+                }
+            },
+            "open_data": {
+                "gas": 10,
+                "infrared_activity": true,
+                "breath_rate": 10,
+                "smoke": 10,
+                "heartbeat": 40
+            },
+            "close_data": {
+                "gas": 10,
+                "infrared_activity": true,
+                "breath_rate": 10,
+                "smoke": 10,
+                "heartbeat": 65
+            },
+            "tags": [
+                "临汾路街道",
+                "较大事件",
+                [
+                    "公共服务",
+                    "医疗服务"
+                ],
+                "独居养老服务"
+            ]
+        },
+        {
+            "rule_json": {
+                "name": "TEST-NanXi-Rule3-南京西路街道小区垃圾箱满溢",
+                "type": "smart",
+                "enabled": 1,
+                "smartRule": {
+                    "eventType": [
+                        "公共管理",
+                        "街面管理",
+                        "环卫市容",
+                        "垃圾箱满溢"
+                    ],
+                    "eventLevel": "一般事件",
+                    "targetParentAreaID": 1,
+                    "targetParentAreaCategory": "小区",
+                    "description": "南京西路测试规则3-小区垃圾满溢监测",
+                    "occurDateRanges": [
+                        {
+                            "beginSecondsOfDay": 0,
+                            "endSecondsOfDay": 86400
+                        }
+                    ],
+                    "triggerConditions": [
+                        {
+                            "numDevices": 1,
+                            "deviceType": "TrashBin",
+                            "genericPropertyName": "garbage",
+                            "matchMode": "LessThan",
+                            "value": 20,
+                            "secondsLasts": 10
+                        }
+                    ],
+                    "triggerLogicAnd": 0
+                }
+            },
+            "point": {
+                "id": 0,
+                "name": "TEST-NanXi-Point-Rule3",
+                "address": "TEST-南京西路测试点位地址001",
+                "category": "点位",
+                "sponsors": [],
+                "data": {
+                    "area_district": {
+                        "areaID": 39,
+                        "areaCategory": "区",
+                        "areaName": "静安区"
+                    },
+                    "PTscene": "垃圾满溢监测",
+                    "town": {
+                        "areaID": 1,
+                        "areaCategory": "街道",
+                        "areaName": "南京西路街道"
+                    },
+                    "location": {
+                        "latitude": 31.226435,
+                        "system": "wgs84",
+                        "longitude": 121.447697
+                    }
+                },
+                "parentID": 281
+            },
+            "device": {
+                "deviceID": "TEST-NanXi-DeviceID001",
+                "deviceType": "TrashBin",
+                "channel": "unicom",
+                "data": {
+                    "address": "TEST-南京西路测试设备地址001",
+                    "town": "南京西路街道",
+                    "vendor": "联数物联",
+                    "district": "静安区",
+                    "isVirtual": false,
+                    "isSensor": true,
+                    "setup_time": 1522339200,
+                    "location": {
+                        "latitude": 31.226435,
+                        "system": "wgs84",
+                        "longitude": 121.447697
+                    },
+                    "PTscene": "垃圾满溢监测",
+                    "area_district": "静安区"
+                }
+            },
+            "open_data": {
+                "garbage": 12
+            },
+            "close_data": {
+                "garbage": 30
+            },
+            "tags": [
+                "南京西路街道",
+                "一般事件",
+                [
+                    "公共管理",
+                    "街面管理",
+                    "环卫市容",
+                    "垃圾箱满溢"
+                ],
+                "垃圾满溢监测"
+            ]
+        },
+        {
+            "rule_json": {
+                "name": "TEST-NanXi-Rule4-南京西路街道商场垃圾箱满溢",
+                "type": "smart",
+                "enabled": 1,
+                "smartRule": {
+                    "eventType": [
+                        "公共管理",
+                        "街面管理",
+                        "环卫市容",
+                        "垃圾箱满溢"
+                    ],
+                    "eventLevel": "一般事件",
+                    "targetParentAreaID": 1,
+                    "targetParentAreaCategory": "商场",
+                    "description": "南京西路测试规则4-商场垃圾满溢监测",
+                    "occurDateRanges": [
+                        {
+                            "beginSecondsOfDay": 0,
+                            "endSecondsOfDay": 86400
+                        }
+                    ],
+                    "triggerConditions": [
+                        {
+                            "numDevices": 1,
+                            "deviceType": "TrashBin",
+                            "genericPropertyName": "garbage",
+                            "matchMode": "LessThan",
+                            "value": 20,
+                            "secondsLasts": 10
+                        }
+                    ],
+                    "triggerLogicAnd": 0
+                }
+            },
+            "point": {
+                "id": 0,
+                "name": "TEST-NanXi-Point-Rule4",
+                "address": "TEST-南京西路测试点位地址002",
+                "category": "点位",
+                "sponsors": [],
+                "data": {
+                    "area_district": {
+                        "areaID": 39,
+                        "areaCategory": "区",
+                        "areaName": "静安区"
+                    },
+                    "PTscene": "垃圾满溢监测",
+                    "town": {
+                        "areaID": 1,
+                        "areaCategory": "街道",
+                        "areaName": "南京西路街道"
+                    },
+                    "location": {
+                        "latitude": 31.232375,
+                        "system": "wgs84",
+                        "longitude": 121.457985
+                    }
+                },
+                "parentID": 2250
+            },
+            "device": {
+                "deviceID": "TEST-NanXi-DeviceID002",
+                "deviceType": "TrashBin",
+                "channel": "unicom",
+                "data": {
+                    "address": "TEST-南京西路测试设备地址002",
+                    "town": "南京西路街道",
+                    "vendor": "联数物联",
+                    "district": "静安区",
+                    "isVirtual": false,
+                    "isSensor": true,
+                    "setup_time": 1522339200,
+                    "location": {
+                        "latitude": 31.232375,
+                        "system": "wgs84",
+                        "longitude": 121.457985
+                    },
+                    "PTscene": "垃圾满溢监测",
+                    "area_district": "静安区"
+                }
+            },
+            "open_data": {
+                "garbage": 12
+            },
+            "close_data": {
+                "garbage": 30
+            },
+            "tags": [
+                "南京西路街道",
+                "一般事件",
+                [
+                    "公共管理",
+                    "街面管理",
+                    "环卫市容",
+                    "垃圾箱满溢"
+                ],
+                "垃圾满溢监测"
+            ]
+        },
+        {
+            "rule_json": {
+                "name": "TEST-NanXi-Rule5-南京西路小区井盖水位预警",
+                "type": "smart",
+                "enabled": 1,
+                "smartRule": {
+                    "eventType": [
+                        "公共管理",
+                        "街面管理",
+                        "设施管理"
+                    ],
+                    "eventLevel": "一般事件",
+                    "targetParentAreaID": 1,
+                    "targetParentAreaCategory": "小区",
+                    "description": "南京西路测试规则5-小区井盖水位预警",
+                    "occurDateRanges": [
+                        {
+                            "beginSecondsOfDay": 0,
+                            "endSecondsOfDay": 86400
+                        }
+                    ],
+                    "triggerConditions": [
+                        {
+                            "matchMode": "Equal",
+                            "value": "true",
+                            "genericPropertyName": "water_level_status",
+                            "numDevices": 1,
+                            "deviceType": "WellCoverSensor",
+                            "secondsLasts": 10
+                        },
+                        {
+                            "matchMode": "GreaterThan",
+                            "value": 200,
+                            "genericPropertyName": "water_level",
+                            "numDevices": 1,
+                            "deviceType": "WellCoverSensor",
+                            "secondsLasts": 10
+                        }
+                    ],
+                    "triggerLogicAnd": 0
+                }
+            },
+            "point": {
+                "id": 0,
+                "name": "TEST-NanXi-Point-Rule5",
+                "address": "TEST-南京西路测试点位地址003",
+                "category": "点位",
+                "sponsors": [],
+                "data": {
+                    "area_district": {
+                        "areaID": 39,
+                        "areaCategory": "区",
+                        "areaName": "静安区"
+                    },
+                    "PTscene": "智能井盖",
+                    "town": {
+                        "areaID": 1,
+                        "areaCategory": "街道",
+                        "areaName": "南京西路街道"
+                    },
+                    "location": {
+                        "latitude": 31.2326311177,
+                        "system": "wgs84",
+                        "longitude": 121.456468114
+                    }
+                },
+                "parentID": 166
+            },
+            "device": {
+                "deviceID": "TEST-NanXi-DeviceID003",
+                "deviceType": "WellCoverSensor",
+                "channel": "unicom",
+                "data": {
+                    "address": "TEST-南京西路测试设备地址003",
+                    "town": "南京西路街道",
+                    "vendor": "联数物联",
+                    "district": "静安区",
+                    "isVirtual": false,
+                    "isSensor": true,
+                    "setup_time": 1522339200,
+                    "location": {
+                        "latitude": 31.2326311177,
+                        "system": "wgs84",
+                        "longitude": 121.456468114
+                    },
+                    "PTscene": "智能井盖",
+                    "area_district": "静安区"
+                }
+            },
+            "open_data": {
+                "door_status": true,
+                "signal": 98,
+                "water_level": [
+                    300
+                ],
+                "water_level_status": true
+            },
+            "close_data": {
+                "door_status": true,
+                "signal": 98,
+                "water_level": [
+                    100
+                ],
+                "water_level_status": false
+            },
+            "tags": [
+                "南京西路街道",
+                "一般事件",
+                [
+                    "公共管理",
+                    "街面管理",
+                    "设施管理"
+                ],
+                "智能井盖"
+            ]
+        },
+        {
+            "rule_json": {
+                "name": "TEST-LinFen-Rule6-临汾路小区井盖水位预警",
+                "type": "smart",
+                "enabled": 1,
+                "smartRule": {
+                    "eventType": [
+                        "公共管理",
+                        "街面管理",
+                        "设施管理"
+                    ],
+                    "eventLevel": "一般事件",
+                    "targetParentAreaID": 2,
+                    "targetParentAreaCategory": "小区",
+                    "description": "临汾路测试规则6-小区井盖水位预警",
+                    "occurDateRanges": [
+                        {
+                            "beginSecondsOfDay": 0,
+                            "endSecondsOfDay": 86400
+                        }
+                    ],
+                    "triggerConditions": [
+                        {
+                            "matchMode": "Equal",
+                            "value": "true",
+                            "genericPropertyName": "water_level_status",
+                            "numDevices": 1,
+                            "deviceType": "WellCoverSensor",
+                            "secondsLasts": 10
+                        },
+                        {
+                            "matchMode": "GreaterThan",
+                            "value": 200,
+                            "genericPropertyName": "water_level",
+                            "numDevices": 1,
+                            "deviceType": "WellCoverSensor",
+                            "secondsLasts": 10
+                        }
+                    ],
+                    "triggerLogicAnd": 0
+                }
+            },
+            "point": {
+                "id": 0,
+                "name": "TEST-LinFen-Point-Rule6",
+                "address": "TEST-临汾路测试点位地址003",
+                "category": "点位",
+                "sponsors": [],
+                "data": {
+                    "area_district": {
+                        "areaID": 39,
+                        "areaCategory": "区",
+                        "areaName": "静安区"
+                    },
+                    "PTscene": "智能井盖",
+                    "town": {
+                        "areaID": 2,
+                        "areaCategory": "街道",
+                        "areaName": "临汾路街道"
+                    },
+                    "location": {
+                        "latitude": 31.315522,
+                        "system": "wgs84",
+                        "longitude": 121.454592
+                    }
+                },
+                "parentID": 68
+            },
+            "device": {
+                "deviceID": "TEST-LinFen-DeviceID003",
+                "deviceType": "WellCoverSensor",
+                "channel": "telecom",
+                "data": {
+                    "address": "TEST-临汾路测试设备地址003",
+                    "town": "临汾路街道",
+                    "vendor": "联数物联",
+                    "district": "静安区",
+                    "isVirtual": false,
+                    "isSensor": true,
+                    "setup_time": 1522339200,
+                    "location": {
+                        "latitude": 31.315522,
+                        "system": "wgs84",
+                        "longitude": 121.454592
+                    },
+                    "PTscene": "智能井盖",
+                    "area_district": "静安区"
+                }
+            },
+            "open_data": {
+                "door_status": true,
+                "signal": 98,
+                "water_level": [
+                    300
+                ],
+                "water_level_status": true
+            },
+            "close_data": {
+                "door_status": true,
+                "signal": 98,
+                "water_level": [
+                    100
+                ],
+                "water_level_status": false
+            },
+            "tags": [
+                "临汾路街道",
+                "一般事件",
+                [
+                    "公共管理",
+                    "街面管理",
+                    "设施管理"
+                ],
+                "智能井盖"
+            ]
+        }
+    ]
+}
