@@ -1,9 +1,0 @@
-openpyxl==2.6.1
-XMind==1.2.0
-requests==2.18.4
-HttpRunner==1.5.8
-Django==2.1.7
-paramiko==2.4.1
-dwebsocket==0.4.2
-django_celery==3.2.2
-PyYAML==5.1
